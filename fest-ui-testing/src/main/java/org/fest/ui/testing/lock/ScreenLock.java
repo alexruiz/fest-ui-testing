@@ -20,6 +20,7 @@ import java.util.concurrent.locks.*;
 import net.jcip.annotations.*;
 
 import org.fest.ui.testing.exception.ScreenLockException;
+import org.fest.util.VisibleForTesting;
 
 /**
  * Lock that each GUI test should acquire before being executed, to guarantee sequential execution of GUI tests and to
@@ -129,5 +130,5 @@ public final class ScreenLock {
     static ScreenLock instance = new ScreenLock();
   }
 
-  ScreenLock() {}
+  @VisibleForTesting ScreenLock() {}
 }
