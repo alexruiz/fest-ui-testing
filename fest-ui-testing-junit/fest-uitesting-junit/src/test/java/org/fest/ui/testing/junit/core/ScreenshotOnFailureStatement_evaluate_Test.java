@@ -61,7 +61,7 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
     statement.screenshotTaker = screenshotTaker;
   }
 
-  @Test public void should_take_screenshot_if_test_is_GuiTest() throws Throwable {
+  @Test public void should_take_screenshot_if_failing_test_is_GuiTest() throws Throwable {
     doThrow(toBeThrown).when(base).evaluate();
     when(filter.isGuiTest(method)).thenReturn(true);
     when(method.getMethod()).thenReturn(realMethod);
@@ -70,7 +70,7 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
     verify(screenshotTaker).takeScreenshot(realMethod);
   }
 
-  @Test public void should_not_take_screenshot_if_test_is_not_GuiTest() throws Throwable {
+  @Test public void should_not_take_screenshot_if_failing_test_is_not_GuiTest() throws Throwable {
     doThrow(toBeThrown).when(base).evaluate();
     when(filter.isGuiTest(method)).thenReturn(false);
     expectErrorWhenEvaluatingStatement();
@@ -83,4 +83,8 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
     thrown.expectMessage(toBeThrown.getMessage());
   }
 
+  @Test public void should_not_take_screenshot_if_test_does_not_fail() throws Throwable {
+    statement.evaluate();
+    verify(base).evaluate();
+  }
 }
