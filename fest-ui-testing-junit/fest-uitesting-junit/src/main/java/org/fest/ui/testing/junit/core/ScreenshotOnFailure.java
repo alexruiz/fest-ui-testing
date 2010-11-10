@@ -49,9 +49,17 @@ public class ScreenshotOnFailure implements MethodRule {
       try {
         base.evaluate();
       } catch (Throwable t) {
-        if (guiTestFilter.isGuiTest(method))
-          screenshotTaker.takeScreenshot(method.getMethod());
+        takeScreenshotIfApplicable();
         throw t;
+      }
+    }
+
+    private void takeScreenshotIfApplicable() {
+      try {
+        if (!guiTestFilter.isGuiTest(method)) return;
+        screenshotTaker.takeScreenshot(method.getMethod());
+      } catch (RuntimeException ignored) {
+        ignored.printStackTrace(); // not sure what we should do here.
       }
     }
   }

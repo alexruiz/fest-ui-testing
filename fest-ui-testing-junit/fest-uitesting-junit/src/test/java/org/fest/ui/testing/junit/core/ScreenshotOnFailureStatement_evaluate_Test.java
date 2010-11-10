@@ -61,6 +61,11 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
     statement.screenshotTaker = screenshotTaker;
   }
 
+  @Test public void should_not_take_screenshot_if_test_does_not_fail() throws Throwable {
+    statement.evaluate();
+    verify(base).evaluate();
+  }
+
   @Test public void should_take_screenshot_if_failing_test_is_GuiTest() throws Throwable {
     doThrow(toBeThrown).when(base).evaluate();
     when(filter.isGuiTest(method)).thenReturn(true);
@@ -78,13 +83,16 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
     verifyZeroInteractions(screenshotTaker);
   }
 
+  @Test public void should_not_lose_original_exception_if_screenshot_fails() throws Throwable {
+    doThrow(toBeThrown).when(base).evaluate();
+    when(filter.isGuiTest(method)).thenThrow(new RuntimeException("Could not take screenshot"));
+    expectErrorWhenEvaluatingStatement();
+    statement.evaluate();
+    verifyZeroInteractions(screenshotTaker);
+  }
+
   private void expectErrorWhenEvaluatingStatement() {
     thrown.expect(toBeThrown.getClass());
     thrown.expectMessage(toBeThrown.getMessage());
-  }
-
-  @Test public void should_not_take_screenshot_if_test_does_not_fail() throws Throwable {
-    statement.evaluate();
-    verify(base).evaluate();
   }
 }
