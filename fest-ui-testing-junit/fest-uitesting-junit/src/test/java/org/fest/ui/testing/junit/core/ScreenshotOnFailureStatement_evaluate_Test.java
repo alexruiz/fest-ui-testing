@@ -36,12 +36,20 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
 
   @Rule public ExpectedException thrown = none();
 
+  private static Throwable toBeThrown;
+  private static Method realMethod;
+
   private Statement base;
   private FrameworkMethod method;
   private GuiTestFilter filter;
   private ScreenshotTaker screenshotTaker;
 
   private ScreenshotOnFailureStatement statement;
+
+  @BeforeClass public static void setUpOnce() {
+    toBeThrown = new Throwable("On purpose");
+    realMethod = method("toString").in(Object.class).info();
+  }
 
   @Before public void setUp() {
     base = mock(Statement.class);
@@ -54,24 +62,25 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
   }
 
   @Test public void should_take_screenshot_if_test_is_GuiTest() throws Throwable {
-    Throwable toBeThrown = new Throwable("On purpose");
     doThrow(toBeThrown).when(base).evaluate();
     when(filter.isGuiTest(method)).thenReturn(true);
-    Method realMethod = method("toString").in(Object.class).info();
     when(method.getMethod()).thenReturn(realMethod);
-    thrown.expect(Throwable.class);
-    thrown.expectMessage("On purpose");
+    expectErrorWhenEvaluatingStatement();
     statement.evaluate();
     verify(screenshotTaker).takeScreenshot(realMethod);
   }
 
   @Test public void should_not_take_screenshot_if_test_is_not_GuiTest() throws Throwable {
-    Throwable toBeThrown = new Throwable("On purpose");
     doThrow(toBeThrown).when(base).evaluate();
     when(filter.isGuiTest(method)).thenReturn(false);
-    thrown.expect(Throwable.class);
-    thrown.expectMessage("On purpose");
+    expectErrorWhenEvaluatingStatement();
     statement.evaluate();
     verifyZeroInteractions(screenshotTaker);
   }
+
+  private void expectErrorWhenEvaluatingStatement() {
+    thrown.expect(toBeThrown.getClass());
+    thrown.expectMessage(toBeThrown.getMessage());
+  }
+
 }
