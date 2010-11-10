@@ -22,7 +22,7 @@ import org.junit.experimental.categories.Category;
  * @author Alex Ruiz
  */
 @Category(GuiTest.class)
-public class A_Test {
+public class A {
 
   @Test public void a() {}
 }

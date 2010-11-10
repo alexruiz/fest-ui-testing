@@ -14,12 +14,15 @@
  */
 package org.fest.ui.testing.junit.test;
 
+import org.fest.ui.testing.junit.core.GuiTest;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * @author Alex Ruiz
  */
-public class B_Test extends A_Test {
+public class E extends D {
 
-  @Test public void b() {}
+  @Category(GuiTest.class)
+  @Test public void e() {}
 }

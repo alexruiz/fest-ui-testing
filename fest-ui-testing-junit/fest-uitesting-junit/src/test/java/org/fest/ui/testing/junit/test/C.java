@@ -21,8 +21,8 @@ import org.junit.experimental.categories.Category;
 /**
  * @author Alex Ruiz
  */
-public class E_Test extends D_Test {
+@Category(GuiTest.class)
+public class C extends A {
 
-  @Category(GuiTest.class)
-  @Test public void e() {}
+  @Test public void c() {}
 }

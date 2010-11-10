@@ -36,37 +36,44 @@ public class CategoryFilter_Test {
     filter = new CategoryFilter(GuiTest.class, null);
   }
 
-  @Test public void should_run_A_Test() {
-    boolean shouldRun = filter.shouldRun(createSuiteDescription(A_Test.class));
+  @Test public void should_run_A() {
+    boolean shouldRun = filter.shouldRun(createSuiteDescription(A.class));
     assertTrue(shouldRun);
   }
 
-  @Test public void should_not_run_B_Test() {
-    boolean shouldRun = filter.shouldRun(createSuiteDescription(B_Test.class));
+  @Test public void should_not_run_B() {
+    boolean shouldRun = filter.shouldRun(createSuiteDescription(B.class));
     assertFalse(shouldRun);
   }
 
-  @Test public void should_run_C_Test() {
-    boolean shouldRun = filter.shouldRun(createSuiteDescription(C_Test.class));
+  @Test public void should_run_C() {
+    boolean shouldRun = filter.shouldRun(createSuiteDescription(C.class));
+    assertTrue(shouldRun);
+  }
+
+  @Test public void should_run_a_from_C() {
+    Class<?> testClass = C.class;
+    Method method = method("a").in(testClass).info();
+    boolean shouldRun = filter.shouldRun(createTestDescription(testClass, method.getName(), method.getAnnotations()));
     assertTrue(shouldRun);
   }
 
   @Test public void should_run_d() {
-    Class<?> testClass = D_Test.class;
+    Class<?> testClass = D.class;
     Method method = method("d").in(testClass).info();
     boolean shouldRun = filter.shouldRun(createTestDescription(testClass, method.getName(), method.getAnnotations()));
     assertTrue(shouldRun);
   }
 
-  @Test public void should_run_d_from_E_Test() {
-    Class<?> testClass = E_Test.class;
+  @Test public void should_run_d_from_E() {
+    Class<?> testClass = E.class;
     Method method = method("d").in(testClass).info();
     boolean shouldRun = filter.shouldRun(createTestDescription(testClass, method.getName(), method.getAnnotations()));
     assertTrue(shouldRun);
   }
 
   @Test public void should_run_e() {
-    Class<?> testClass = E_Test.class;
+    Class<?> testClass = E.class;
     Method method = method("e").in(testClass).info();
     boolean shouldRun = filter.shouldRun(createTestDescription(testClass, method.getName(), method.getAnnotations()));
     assertTrue(shouldRun);

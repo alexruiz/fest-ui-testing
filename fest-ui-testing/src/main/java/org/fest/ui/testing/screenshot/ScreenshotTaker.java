@@ -12,17 +12,23 @@
  *
  * Copyright @2010 the original author or authors.
  */
-package org.fest.ui.testing.junit.test;
+package org.fest.ui.testing.screenshot;
 
-import org.fest.ui.testing.junit.core.GuiTest;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import java.lang.reflect.Method;
 
 /**
+ * Takes a screenshot of the desktop.
+ *
  * @author Alex Ruiz
  */
-@Category(GuiTest.class)
-public class C_Test extends A_Test {
+public class ScreenshotTaker {
 
-  @Test public void c() {}
+  /**
+   * @param method
+   */
+  public void takeScreenshot(Method method) {
+    // TODO Auto-generated method stub
+
+  }
+
 }
