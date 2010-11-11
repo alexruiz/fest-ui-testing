@@ -12,7 +12,7 @@
  *
  * Copyright @2010 the original author or authors.
  */
-package org.fest.ui.testing.junit.rule;
+package org.fest.ui.testing.junit.test;
 
 /**
  * @author Alex Ruiz

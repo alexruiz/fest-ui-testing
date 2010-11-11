@@ -14,14 +14,14 @@
  */
 package org.fest.ui.testing.junit.rule;
 
-import static java.io.File.separator;
 import static org.fest.ui.testing.screenshot.ImageFormats.PNG;
 import static org.fest.util.Arrays.isEmpty;
 import static org.fest.util.Strings.concat;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Method;
+
+import org.fest.util.VisibleForTesting;
 
 /**
  * Creates the path of the file where a screenshot of the desktop will be saved when a GUI test fails.
@@ -32,14 +32,20 @@ import java.lang.reflect.Method;
 class ScreenshotFilePathCreator {
 
   private final File parentFolder;
+  @VisibleForTesting final SystemProperties system;
 
   ScreenshotFilePathCreator(File parentFolder) {
+    this(parentFolder, SystemProperties.instance());
+  }
+  
+  @VisibleForTesting ScreenshotFilePathCreator(File parentFolder, SystemProperties system) {
     this.parentFolder = parentFolder;
+    this.system = system;
   }
 
   String filePathFrom(Class<?> type, Method method) throws IOException {
     String testName = testNameFrom(type, method);
-    return concat(parentFolder.getCanonicalPath(), separator, testName, ".", PNG);
+    return concat(parentFolder.getCanonicalPath(), system.fileSeparator(), testName, ".", PNG);
   }
 
   private static String testNameFrom(Class<?> type, Method method) {

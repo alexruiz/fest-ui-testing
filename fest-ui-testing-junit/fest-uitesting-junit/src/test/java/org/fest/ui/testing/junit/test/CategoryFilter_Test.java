@@ -41,6 +41,13 @@ public class CategoryFilter_Test {
     assertThat(shouldRun).isTrue();
   }
 
+  @Test public void should_run_a() {
+    Class<?> testClass = A.class;
+    Method method = method("a").in(testClass).info();
+    boolean shouldRun = filter.shouldRun(createTestDescription(testClass, method.getName(), method.getAnnotations()));
+    assertThat(shouldRun).isTrue();
+  }
+
   @Test public void should_not_run_B() {
     boolean shouldRun = filter.shouldRun(createSuiteDescription(B.class));
     assertThat(shouldRun).isFalse();

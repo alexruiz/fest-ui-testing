@@ -14,12 +14,12 @@
  */
 package org.fest.ui.testing.junit.rule;
 
-import static java.io.File.separator;
 import static org.fest.util.Files.delete;
 import static org.fest.util.Strings.concat;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+
+import org.fest.util.VisibleForTesting;
 
 /**
  * Creates folders in the file system.
@@ -33,6 +33,16 @@ class FolderCreator {
   static FolderCreator instance() {
     return INSTANCE;
   }
+  
+  @VisibleForTesting final SystemProperties system;
+
+  private FolderCreator() {
+    this(SystemProperties.instance());
+  }
+
+  @VisibleForTesting FolderCreator(SystemProperties system) {
+    this.system = system;
+  }
 
   /**
    * Creates a folder in the given parent folder. The folder will be created only if one with the given name does not
@@ -45,12 +55,10 @@ class FolderCreator {
    */
   File createFolder(File parent, String name) throws IOException {
     String canonicalPath = parent.getCanonicalPath();
-    File folder = new File(concat(canonicalPath, separator, name));
+    File folder = new File(concat(canonicalPath, system.fileSeparator(), name));
     if (folder.isDirectory()) return folder;
     if (folder.exists()) delete(folder);
     folder.mkdir();
     return folder;
   }
-
-  private FolderCreator() {}
 }

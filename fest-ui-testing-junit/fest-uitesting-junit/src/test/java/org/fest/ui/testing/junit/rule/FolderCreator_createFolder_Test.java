@@ -40,7 +40,7 @@ public class FolderCreator_createFolder_Test {
   @Before public void setUp() {
     parentFolder = temporaryFolder();
     newFolderName = randomUUID().toString();
-    folderCreator = FolderCreator.instance();
+    folderCreator = new FolderCreator(new SystemProperties("/"));
   }
 
   @After public void tearDown() {
@@ -50,6 +50,6 @@ public class FolderCreator_createFolder_Test {
   @Test public void should_create_folder() throws IOException {
     createdFolder = folderCreator.createFolder(parentFolder, newFolderName);
     assertThat(createdFolder.getName()).isEqualTo(newFolderName);
-    assertThat(createdFolder.getParentFile()).isEqualTo(parentFolder);
+    assertThat(createdFolder.getParentFile().getCanonicalPath()).isEqualTo(parentFolder.getCanonicalPath());
   }
 }

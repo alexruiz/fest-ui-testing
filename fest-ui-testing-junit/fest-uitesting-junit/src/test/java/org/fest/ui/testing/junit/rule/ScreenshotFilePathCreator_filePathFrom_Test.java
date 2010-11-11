@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.fest.ui.testing.junit.rule.ScreenshotFilePathCreator;
+import org.fest.ui.testing.junit.test.FakeTestClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,27 +41,27 @@ public class ScreenshotFilePathCreator_filePathFrom_Test {
   @Before public void setUp() {
     type = FakeTestClass.class;
     parentFolder = mock(File.class);
-    pathCreator = new ScreenshotFilePathCreator(parentFolder);
+    pathCreator = new ScreenshotFilePathCreator(parentFolder, new SystemProperties("/"));
   }
 
   @Test public void should_create_path_for_method_with_no_parameters() throws IOException {
     Method m = method("noParameters").in(type).info();
     when(parentFolder.getCanonicalPath()).thenReturn("/tmp");
     String createdPath = pathCreator.filePathFrom(type, m);
-    assertThat(createdPath).isEqualTo("/tmp/org.fest.ui.testing.junit.core.FakeTestClass.noParameters.png");
+    assertThat(createdPath).isEqualTo("/tmp/org.fest.ui.testing.junit.test.FakeTestClass.noParameters.png");
   }
 
   @Test public void should_create_path_for_method_with_one_parameter() throws IOException {
     Method m = method("oneParameter").withParameterTypes(float.class).in(type).info();
     when(parentFolder.getCanonicalPath()).thenReturn("/tmp");
     String createdPath = pathCreator.filePathFrom(type, m);
-    assertThat(createdPath).isEqualTo("/tmp/org.fest.ui.testing.junit.core.FakeTestClass.oneParameter(float).png");
+    assertThat(createdPath).isEqualTo("/tmp/org.fest.ui.testing.junit.test.FakeTestClass.oneParameter(float).png");
   }
 
   @Test public void should_create_path_for_method_with_multiple_parameters() throws IOException {
     Method m = method("multipleParameters").withParameterTypes(String.class, int.class).in(type).info();
     when(parentFolder.getCanonicalPath()).thenReturn("/tmp");
     String createdPath = pathCreator.filePathFrom(type, m);
-    assertThat(createdPath).isEqualTo("/tmp/org.fest.ui.testing.junit.core.FakeTestClass.multipleParameters(java.lang.String, int).png");
+    assertThat(createdPath).isEqualTo("/tmp/org.fest.ui.testing.junit.test.FakeTestClass.multipleParameters(java.lang.String, int).png");
   }
 }

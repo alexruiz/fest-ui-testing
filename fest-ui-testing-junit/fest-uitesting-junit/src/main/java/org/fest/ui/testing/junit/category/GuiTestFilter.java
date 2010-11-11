@@ -14,7 +14,14 @@
  */
 package org.fest.ui.testing.junit.category;
 
+import static org.junit.experimental.categories.Categories.CategoryFilter.include;
+import static org.junit.runner.Description.createTestDescription;
+
+import java.lang.reflect.Method;
+
 import org.fest.util.VisibleForTesting;
+import org.junit.experimental.categories.Categories.CategoryFilter;
+import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 
 /**
@@ -25,6 +32,8 @@ import org.junit.runners.model.FrameworkMethod;
 public class GuiTestFilter {
 
   private static final GuiTestFilter INSTANCE = new GuiTestFilter();
+  
+  @VisibleForTesting final CategoryFilter categoryFilter;
 
   /**
    * Returns the singleton instance of this class.
@@ -34,7 +43,13 @@ public class GuiTestFilter {
     return INSTANCE;
   }
 
-  @VisibleForTesting GuiTestFilter() {}
+  private GuiTestFilter() {
+    this(include(GuiTest.class));
+  }
+
+  @VisibleForTesting GuiTestFilter(CategoryFilter categoryFilter) {
+    this.categoryFilter = categoryFilter;
+  }
 
   /**
    * Indicates whether a test belongs to the <code>{@link GuiTest}</code> category or not.
@@ -42,6 +57,9 @@ public class GuiTestFilter {
    * @return {@code true} if the given test belongs to the {@code GuiTest} category; {@code false} otherwise.
    */
   public boolean isGuiTest(FrameworkMethod method) {
-    return false;
+    if (method == null) return false;
+    Method realMethod = method.getMethod();
+    Description d = createTestDescription(realMethod.getDeclaringClass(), method.getName(), method.getAnnotations());
+    return categoryFilter.shouldRun(d);
   }
 }
