@@ -41,6 +41,7 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
 
   private Statement base;
   private FrameworkMethod method;
+  private ScreenshotFilePathCreator pathCreator;
   private GuiTestFilter filter;
   private ScreenshotTaker screenshotTaker;
 
@@ -54,9 +55,10 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
   @Before public void setUp() {
     base = mock(Statement.class);
     method = mock(FrameworkMethod.class);
+    pathCreator = mock(ScreenshotFilePathCreator.class);
+    statement = new ScreenshotOnFailureStatement(base, method, pathCreator);
     filter = mock(GuiTestFilter.class);
     screenshotTaker = mock(ScreenshotTaker.class);
-    statement = new ScreenshotOnFailureStatement(base, method);
     statement.guiTestFilter = filter;
     statement.screenshotTaker = screenshotTaker;
   }
@@ -64,34 +66,46 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
   @Test public void should_not_take_screenshot_if_test_does_not_fail() throws Throwable {
     statement.evaluate();
     verify(base).evaluate();
+    verifyZeroInteractions(method, pathCreator, filter, screenshotTaker);
   }
 
   @Test public void should_take_screenshot_if_failing_test_is_GuiTest() throws Throwable {
     doThrow(toBeThrown).when(base).evaluate();
     when(filter.isGuiTest(method)).thenReturn(true);
     when(method.getMethod()).thenReturn(realMethod);
-    expectErrorWhenEvaluatingStatement();
+    String path = "/tmp/blue.png";
+    when(pathCreator.filePathFrom(realMethod.getDeclaringClass(), realMethod)).thenReturn(path);
+    expectStatementFailure();
     statement.evaluate();
-    verify(screenshotTaker).takeScreenshot(realMethod);
+    verify(screenshotTaker).saveDesktopAsPng(path);
+  }
+
+  @Test public void should_not_take_screenshot_if_ScreenshotFilePathCreator_is_null() throws Throwable {
+    statement = new ScreenshotOnFailureStatement(base, method, null);
+    doThrow(toBeThrown).when(base).evaluate();
+    when(filter.isGuiTest(method)).thenReturn(true);
+    expectStatementFailure();
+    statement.evaluate();
+    verifyZeroInteractions(method, screenshotTaker);
   }
 
   @Test public void should_not_take_screenshot_if_failing_test_is_not_GuiTest() throws Throwable {
     doThrow(toBeThrown).when(base).evaluate();
     when(filter.isGuiTest(method)).thenReturn(false);
-    expectErrorWhenEvaluatingStatement();
+    expectStatementFailure();
     statement.evaluate();
-    verifyZeroInteractions(screenshotTaker);
+    verifyZeroInteractions(method, pathCreator, screenshotTaker);
   }
 
   @Test public void should_not_lose_original_exception_if_screenshot_fails() throws Throwable {
     doThrow(toBeThrown).when(base).evaluate();
-    when(filter.isGuiTest(method)).thenThrow(new RuntimeException("Could not take screenshot"));
-    expectErrorWhenEvaluatingStatement();
+    when(filter.isGuiTest(method)).thenThrow(new RuntimeException("Thrown on purpose"));
+    expectStatementFailure();
     statement.evaluate();
-    verifyZeroInteractions(screenshotTaker);
+    verifyZeroInteractions(method, pathCreator, screenshotTaker);
   }
 
-  private void expectErrorWhenEvaluatingStatement() {
+  private void expectStatementFailure() {
     thrown.expect(toBeThrown.getClass());
     thrown.expectMessage(toBeThrown.getMessage());
   }

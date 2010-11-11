@@ -1,5 +1,5 @@
 /*
- * Created on Nov 9, 2010
+ * Created on Nov 10, 2010
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -15,23 +15,13 @@
 package org.fest.ui.testing.screenshot;
 
 /**
- * Takes a screenshot of the desktop.
+ * Image formats used in this package.
  *
  * @author Alex Ruiz
  */
-public class ScreenshotTaker {
+public final class ImageFormats {
 
-  /**
-   * Takes a screenshot of the desktop and saves it as a PNG file.
-   * @param path the path of the file to save the screenshot to.
-   * @throws NullPointerException if the given file path is {@code null}.
-   * @throws IllegalArgumentException if the given file path does not end with ".png".
-   */
-  /*
-   * @throws ImageException if the given file path belongs to a non-empty directory.
-   * @throws ImageException if an I/O error prevents the image from being saved as a file.
-   */
-  public void saveDesktopAsPng(String path) {
-    // TODO implement
-  }
+  public static final String PNG = "png";
+
+  private ImageFormats() {}
 }

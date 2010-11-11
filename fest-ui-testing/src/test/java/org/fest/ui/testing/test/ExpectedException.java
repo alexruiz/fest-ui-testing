@@ -39,11 +39,15 @@ public class ExpectedException implements MethodRule {
     return delegate.apply(base, method, target);
   }
 
+  public void expectIllegalArgumentException(String message) {
+    expect(IllegalArgumentException.class, message);
+  }
+
   public void expectScreenLockException(String message) {
     expect(ScreenLockException.class, message);
   }
 
-  private void expect(Class<? extends Throwable> type, String message) {
+  public void expect(Class<? extends Throwable> type, String message) {
     expect(type);
     expectMessage(message);
   }

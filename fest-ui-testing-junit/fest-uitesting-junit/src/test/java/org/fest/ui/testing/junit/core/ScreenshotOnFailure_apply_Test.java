@@ -14,6 +14,7 @@
  */
 package org.fest.ui.testing.junit.core;
 
+import static org.fest.ui.testing.junit.core.ScreenshotOnFailure.newRule;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
@@ -33,7 +34,7 @@ public class ScreenshotOnFailure_apply_Test {
   private static ScreenshotOnFailure rule;
 
   @BeforeClass public static void setUpOnce() {
-    rule = new ScreenshotOnFailure();
+    rule = newRule();
   }
 
   @Test public void should_return_a_ScreenshotOnFailureStatement() {

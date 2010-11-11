@@ -14,6 +14,9 @@
  */
 package org.fest.ui.testing.junit.core;
 
+import java.io.File;
+import java.lang.reflect.Method;
+
 import org.fest.ui.testing.screenshot.ScreenshotTaker;
 import org.fest.util.VisibleForTesting;
 import org.junit.rules.MethodRule;
@@ -28,9 +31,25 @@ import org.junit.runners.model.Statement;
  */
 public class ScreenshotOnFailure implements MethodRule {
 
-  /** {@inheritDoc} */
+  @VisibleForTesting final ScreenshotFilePathCreator pathCreator;
+
+  public static ScreenshotOnFailure newRule() {
+    ScreenshotFilePathCreator pathCreator = null;
+    try {
+      File parentFolder = ScreenshotsFolderCreator.instance().createScreenshotsFolder();
+      pathCreator = new ScreenshotFilePathCreator(parentFolder);
+    } catch (Exception e) {
+      ignore(e);
+    }
+    return new ScreenshotOnFailure(pathCreator);
+  }
+
+  @VisibleForTesting ScreenshotOnFailure(ScreenshotFilePathCreator pathCreator) {
+    this.pathCreator = pathCreator;
+  }
+
   public Statement apply(Statement base, FrameworkMethod method, Object target) {
-    return new ScreenshotOnFailureStatement(base, method);
+    return new ScreenshotOnFailureStatement(base, method, pathCreator);
   }
 
   @VisibleForTesting static class ScreenshotOnFailureStatement extends Statement {
@@ -39,10 +58,12 @@ public class ScreenshotOnFailure implements MethodRule {
 
     GuiTestFilter guiTestFilter = GuiTestFilter.instance();
     ScreenshotTaker screenshotTaker = new ScreenshotTaker();
+    private final ScreenshotFilePathCreator pathCreator;
 
-    ScreenshotOnFailureStatement(Statement base, FrameworkMethod method) {
+    ScreenshotOnFailureStatement(Statement base, FrameworkMethod method, ScreenshotFilePathCreator pathCreator) {
       this.base = base;
       this.method = method;
+      this.pathCreator = pathCreator;
     }
 
     @Override public void evaluate() throws Throwable {
@@ -57,10 +78,17 @@ public class ScreenshotOnFailure implements MethodRule {
     private void takeScreenshotIfApplicable() {
       try {
         if (!guiTestFilter.isGuiTest(method)) return;
-        screenshotTaker.takeScreenshot(method.getMethod());
-      } catch (RuntimeException ignored) {
-        ignored.printStackTrace(); // not sure what we should do here.
+        if (pathCreator == null) return;
+        Method realMethod = method.getMethod();
+        String path = pathCreator.filePathFrom(realMethod.getDeclaringClass(), realMethod);
+        screenshotTaker.saveDesktopAsPng(path);
+      } catch (Exception e) {
+        ignore(e);
       }
     }
+  }
+
+  private static void ignore(Throwable t) {
+    t.printStackTrace(); // not sure what we should do here.
   }
 }
