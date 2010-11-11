@@ -12,13 +12,14 @@
  *
  * Copyright @2010 the original author or authors.
  */
-package org.fest.ui.testing.junit.core;
+package org.fest.ui.testing.junit.rule;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.fest.ui.testing.junit.core.ScreenshotOnFailure.newRule;
+import static org.fest.ui.testing.junit.rule.ScreenshotOnFailure.newRule;
 import static org.mockito.Mockito.mock;
 
-import org.fest.ui.testing.junit.core.ScreenshotOnFailure.ScreenshotOnFailureStatement;
+import org.fest.ui.testing.junit.rule.ScreenshotOnFailure;
+import org.fest.ui.testing.junit.rule.ScreenshotOnFailure.ScreenshotOnFailureStatement;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;

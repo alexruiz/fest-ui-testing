@@ -12,11 +12,13 @@
  *
  * Copyright @2010 the original author or authors.
  */
-package org.fest.ui.testing.junit.core;
+package org.fest.ui.testing.junit.rule;
 
 import java.io.File;
 import java.lang.reflect.Method;
 
+import org.fest.ui.testing.junit.category.GuiTest;
+import org.fest.ui.testing.junit.category.GuiTestFilter;
 import org.fest.ui.testing.screenshot.ScreenshotTaker;
 import org.fest.util.VisibleForTesting;
 import org.junit.rules.MethodRule;

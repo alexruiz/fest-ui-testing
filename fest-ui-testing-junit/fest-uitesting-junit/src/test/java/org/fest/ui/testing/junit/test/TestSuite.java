@@ -14,7 +14,7 @@
  */
 package org.fest.ui.testing.junit.test;
 
-import org.fest.ui.testing.junit.core.GuiTest;
+import org.fest.ui.testing.junit.category.GuiTest;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;

@@ -12,7 +12,7 @@
  *
  * Copyright @2010 the original author or authors.
  */
-package org.fest.ui.testing.junit.core;
+package org.fest.ui.testing.junit.rule;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.method;
@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.fest.ui.testing.junit.rule.ScreenshotFilePathCreator;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -12,7 +12,7 @@
  *
  * Copyright @2010 the original author or authors.
  */
-package org.fest.ui.testing.junit.core;
+package org.fest.ui.testing.junit.category;
 
 import org.fest.util.VisibleForTesting;
 import org.junit.runners.model.FrameworkMethod;
@@ -22,17 +22,26 @@ import org.junit.runners.model.FrameworkMethod;
  *
  * @author Alex Ruiz
  */
-class GuiTestFilter {
+public class GuiTestFilter {
 
   private static final GuiTestFilter INSTANCE = new GuiTestFilter();
 
-  static GuiTestFilter instance() {
+  /**
+   * Returns the singleton instance of this class.
+   * @return the singleton instance of this class.
+   */
+  public static GuiTestFilter instance() {
     return INSTANCE;
   }
 
   @VisibleForTesting GuiTestFilter() {}
 
-  boolean isGuiTest(FrameworkMethod method) {
+  /**
+   * Indicates whether a test belongs to the <code>{@link GuiTest}</code> category or not.
+   * @param method represents a test method.
+   * @return {@code true} if the given test belongs to the {@code GuiTest} category; {@code false} otherwise.
+   */
+  public boolean isGuiTest(FrameworkMethod method) {
     return false;
   }
 }

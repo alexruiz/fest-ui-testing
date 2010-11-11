@@ -1,5 +1,5 @@
 /*
- * Created on Nov 8, 2010
+ * Created on Nov 10, 2010
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -12,13 +12,16 @@
  *
  * Copyright @2010 the original author or authors.
  */
-package org.fest.ui.testing.junit.core;
+package org.fest.ui.testing.junit.rule;
 
 /**
- * Marks a test as a "GUI test."
- *
  * @author Alex Ruiz
  */
-public interface GuiTest {
+public class FakeTestClass {
 
+  public void noParameters() {}
+
+  public void oneParameter(float first) {}
+
+  public void multipleParameters(String first, int second) {}
 }

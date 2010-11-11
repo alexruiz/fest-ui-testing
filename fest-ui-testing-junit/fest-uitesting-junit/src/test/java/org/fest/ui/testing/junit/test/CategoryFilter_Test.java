@@ -20,7 +20,7 @@ import static org.junit.runner.Description.*;
 
 import java.lang.reflect.Method;
 
-import org.fest.ui.testing.junit.core.GuiTest;
+import org.fest.ui.testing.junit.category.GuiTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Categories.CategoryFilter;

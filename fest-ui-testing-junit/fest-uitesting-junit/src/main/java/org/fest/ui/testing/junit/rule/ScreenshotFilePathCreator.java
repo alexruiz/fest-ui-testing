@@ -12,7 +12,7 @@
  *
  * Copyright @2010 the original author or authors.
  */
-package org.fest.ui.testing.junit.core;
+package org.fest.ui.testing.junit.rule;
 
 import static java.io.File.separator;
 import static org.fest.ui.testing.screenshot.ImageFormats.PNG;

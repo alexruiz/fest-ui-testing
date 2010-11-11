@@ -13,7 +13,7 @@
  *
  * Copyright @2009 the original author or authors.
  */
-package org.fest.ui.testing.junit.core;
+package org.fest.ui.testing.junit.rule;
 
 import static org.fest.util.Files.currentFolder;
 

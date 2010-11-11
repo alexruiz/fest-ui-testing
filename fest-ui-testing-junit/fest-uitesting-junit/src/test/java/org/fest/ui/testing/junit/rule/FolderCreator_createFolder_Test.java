@@ -12,7 +12,7 @@
  *
  * Copyright @2010 the original author or authors.
  */
-package org.fest.ui.testing.junit.core;
+package org.fest.ui.testing.junit.rule;
 
 import static java.util.UUID.randomUUID;
 import static org.fest.assertions.Assertions.assertThat;
@@ -21,6 +21,7 @@ import static org.fest.util.Files.temporaryFolder;
 import java.io.File;
 import java.io.IOException;
 
+import org.fest.ui.testing.junit.rule.FolderCreator;
 import org.junit.*;
 
 /**
