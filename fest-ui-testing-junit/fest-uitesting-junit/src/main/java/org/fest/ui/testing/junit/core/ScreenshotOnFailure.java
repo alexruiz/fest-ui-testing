@@ -49,6 +49,7 @@ public class ScreenshotOnFailure implements MethodRule {
   }
 
   public Statement apply(Statement base, FrameworkMethod method, Object target) {
+    if (pathCreator == null) return base;
     return new ScreenshotOnFailureStatement(base, method, pathCreator);
   }
 
@@ -78,7 +79,6 @@ public class ScreenshotOnFailure implements MethodRule {
     private void takeScreenshotIfApplicable() {
       try {
         if (!guiTestFilter.isGuiTest(method)) return;
-        if (pathCreator == null) return;
         Method realMethod = method.getMethod();
         String path = pathCreator.filePathFrom(realMethod.getDeclaringClass(), realMethod);
         screenshotTaker.saveDesktopAsPng(path);

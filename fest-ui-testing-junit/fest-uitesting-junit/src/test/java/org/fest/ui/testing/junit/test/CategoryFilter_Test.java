@@ -14,8 +14,8 @@
  */
 package org.fest.ui.testing.junit.test;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.method;
-import static org.junit.Assert.*;
 import static org.junit.runner.Description.*;
 
 import java.lang.reflect.Method;
@@ -38,44 +38,44 @@ public class CategoryFilter_Test {
 
   @Test public void should_run_A() {
     boolean shouldRun = filter.shouldRun(createSuiteDescription(A.class));
-    assertTrue(shouldRun);
+    assertThat(shouldRun).isTrue();
   }
 
   @Test public void should_not_run_B() {
     boolean shouldRun = filter.shouldRun(createSuiteDescription(B.class));
-    assertFalse(shouldRun);
+    assertThat(shouldRun).isFalse();
   }
 
   @Test public void should_run_C() {
     boolean shouldRun = filter.shouldRun(createSuiteDescription(C.class));
-    assertTrue(shouldRun);
+    assertThat(shouldRun).isTrue();
   }
 
   @Test public void should_run_a_from_C() {
     Class<?> testClass = C.class;
     Method method = method("a").in(testClass).info();
     boolean shouldRun = filter.shouldRun(createTestDescription(testClass, method.getName(), method.getAnnotations()));
-    assertTrue(shouldRun);
+    assertThat(shouldRun).isTrue();
   }
 
   @Test public void should_run_d() {
     Class<?> testClass = D.class;
     Method method = method("d").in(testClass).info();
     boolean shouldRun = filter.shouldRun(createTestDescription(testClass, method.getName(), method.getAnnotations()));
-    assertTrue(shouldRun);
+    assertThat(shouldRun).isTrue();
   }
 
   @Test public void should_run_d_from_E() {
     Class<?> testClass = E.class;
     Method method = method("d").in(testClass).info();
     boolean shouldRun = filter.shouldRun(createTestDescription(testClass, method.getName(), method.getAnnotations()));
-    assertTrue(shouldRun);
+    assertThat(shouldRun).isTrue();
   }
 
   @Test public void should_run_e() {
     Class<?> testClass = E.class;
     Method method = method("e").in(testClass).info();
     boolean shouldRun = filter.shouldRun(createTestDescription(testClass, method.getName(), method.getAnnotations()));
-    assertTrue(shouldRun);
+    assertThat(shouldRun).isTrue();
   }
 }

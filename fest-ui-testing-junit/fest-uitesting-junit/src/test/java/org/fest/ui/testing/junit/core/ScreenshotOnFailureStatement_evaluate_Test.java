@@ -80,15 +80,6 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
     verify(screenshotTaker).saveDesktopAsPng(path);
   }
 
-  @Test public void should_not_take_screenshot_if_ScreenshotFilePathCreator_is_null() throws Throwable {
-    statement = new ScreenshotOnFailureStatement(base, method, null);
-    doThrow(toBeThrown).when(base).evaluate();
-    when(filter.isGuiTest(method)).thenReturn(true);
-    expectStatementFailure();
-    statement.evaluate();
-    verifyZeroInteractions(method, screenshotTaker);
-  }
-
   @Test public void should_not_take_screenshot_if_failing_test_is_not_GuiTest() throws Throwable {
     doThrow(toBeThrown).when(base).evaluate();
     when(filter.isGuiTest(method)).thenReturn(false);
