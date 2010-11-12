@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 
 import org.fest.ui.testing.junit.category.GuiTestFilter;
 import org.fest.ui.testing.junit.rule.ScreenshotFilePathCreator;
-import org.fest.ui.testing.junit.rule.ScreenshotOnFailure.ScreenshotOnFailureStatement;
 import org.fest.ui.testing.screenshot.ScreenshotTaker;
 import org.junit.*;
 import org.junit.rules.ExpectedException;

@@ -14,12 +14,13 @@
  */
 package org.fest.ui.testing.junit.rule;
 
+import static java.util.logging.Level.WARNING;
+import static java.util.logging.Logger.getAnonymousLogger;
+
 import java.io.File;
-import java.lang.reflect.Method;
+import java.util.logging.Logger;
 
 import org.fest.ui.testing.junit.category.GuiTest;
-import org.fest.ui.testing.junit.category.GuiTestFilter;
-import org.fest.ui.testing.screenshot.ScreenshotTaker;
 import org.fest.util.VisibleForTesting;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
@@ -33,6 +34,8 @@ import org.junit.runners.model.Statement;
  */
 public class ScreenshotOnFailure implements MethodRule {
 
+  private static Logger logger = getAnonymousLogger();
+
   @VisibleForTesting final ScreenshotFilePathCreator pathCreator;
 
   public static ScreenshotOnFailure newRule() {
@@ -41,7 +44,7 @@ public class ScreenshotOnFailure implements MethodRule {
       File parentFolder = ScreenshotsFolderCreator.instance().createScreenshotsFolder();
       pathCreator = new ScreenshotFilePathCreator(parentFolder);
     } catch (Exception e) {
-      ignore(e);
+      logger.log(WARNING, "Unable to create the folder where to store screenshots", e);
     }
     return new ScreenshotOnFailure(pathCreator);
   }
@@ -50,47 +53,9 @@ public class ScreenshotOnFailure implements MethodRule {
     this.pathCreator = pathCreator;
   }
 
+  // TODO document
   public Statement apply(Statement base, FrameworkMethod method, Object target) {
     if (pathCreator == null) return base;
     return new ScreenshotOnFailureStatement(base, method, pathCreator);
-  }
-
-  @VisibleForTesting static class ScreenshotOnFailureStatement extends Statement {
-    final Statement base;
-    final FrameworkMethod method;
-
-    GuiTestFilter guiTestFilter = GuiTestFilter.instance();
-    ScreenshotTaker screenshotTaker = new ScreenshotTaker();
-    private final ScreenshotFilePathCreator pathCreator;
-
-    ScreenshotOnFailureStatement(Statement base, FrameworkMethod method, ScreenshotFilePathCreator pathCreator) {
-      this.base = base;
-      this.method = method;
-      this.pathCreator = pathCreator;
-    }
-
-    @Override public void evaluate() throws Throwable {
-      try {
-        base.evaluate();
-      } catch (Throwable t) {
-        takeScreenshotIfApplicable();
-        throw t;
-      }
-    }
-
-    private void takeScreenshotIfApplicable() {
-      try {
-        if (!guiTestFilter.isGuiTest(method)) return;
-        Method realMethod = method.getMethod();
-        String path = pathCreator.filePathFrom(realMethod.getDeclaringClass(), realMethod);
-        screenshotTaker.saveDesktopAsPng(path);
-      } catch (Exception e) {
-        ignore(e);
-      }
-    }
-  }
-
-  private static void ignore(Throwable t) {
-    t.printStackTrace(); // not sure what we should do here.
   }
 }

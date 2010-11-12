@@ -14,6 +14,14 @@
  */
 package org.fest.ui.testing.screenshot;
 
+import static java.util.logging.Level.WARNING;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.logging.Logger;
+
+import org.fest.util.VisibleForTesting;
+
 /**
  * Takes a screenshot of the desktop.
  *
@@ -21,17 +29,55 @@ package org.fest.ui.testing.screenshot;
  */
 public class ScreenshotTaker {
 
+  private static final ScreenshotTaker INSTANCE = new ScreenshotTaker();
+
+  /**
+   * Returns the singleton instance of this class.
+   * @return the singleton instance of this class.
+   */
+  public static ScreenshotTaker instance() {
+    return INSTANCE;
+  }
+
+  private static Logger logger = Logger.getAnonymousLogger();
+
+  private final ImageFileWriter writer;
+  private final ImageFilePathValidator pathValidator;
+  private Robot robot;
+
+  private ScreenshotTaker() {
+    this(new ImageFileWriter(), ImageFilePathValidator.instance(), RobotFactory.instance());
+  }
+
+  @VisibleForTesting ScreenshotTaker(ImageFileWriter writer, ImageFilePathValidator pathValidator, RobotFactory robotFactory) {
+    this.writer = writer;
+    this.pathValidator = pathValidator;
+    try {
+      robot = robotFactory.newRobotInPrimaryScreen();
+    } catch (Throwable t) {
+      logger.log(WARNING, "Unable to create an AWT Robot", t);
+    }
+  }
+
   /**
    * Takes a screenshot of the desktop and saves it as a PNG file.
    * @param path the path of the file to save the screenshot to.
    * @throws NullPointerException if the given file path is {@code null}.
    * @throws IllegalArgumentException if the given file path does not end with ".png".
    */
-  /*
-   * @throws ImageException if the given file path belongs to a non-empty directory.
-   * @throws ImageException if an I/O error prevents the image from being saved as a file.
-   */
   public void saveDesktopAsPng(String path) {
-    // TODO implement
+    pathValidator.validate(path);
+    if (robot == null) return;
+    BufferedImage screenshot = screenshotOfDesktop();
+    try {
+      writer.writeAsPng(screenshot, path);
+    } catch (Throwable t) {
+      logger.log(WARNING, "Unable to save the screenshot as a file", t);
+    }
+  }
+
+  private BufferedImage screenshotOfDesktop() {
+    Rectangle r = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+    return robot.createScreenCapture(r);
   }
 }

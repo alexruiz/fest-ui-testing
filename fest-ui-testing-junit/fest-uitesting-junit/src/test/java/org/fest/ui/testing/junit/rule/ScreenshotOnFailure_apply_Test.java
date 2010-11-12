@@ -19,7 +19,6 @@ import static org.fest.ui.testing.junit.rule.ScreenshotOnFailure.newRule;
 import static org.mockito.Mockito.mock;
 
 import org.fest.ui.testing.junit.rule.ScreenshotOnFailure;
-import org.fest.ui.testing.junit.rule.ScreenshotOnFailure.ScreenshotOnFailureStatement;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
