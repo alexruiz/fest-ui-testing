@@ -1,5 +1,5 @@
 /*
- * Created on Nov 11, 2010
+ * Created on Nov 12, 2010
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,21 +14,29 @@
  */
 package org.fest.ui.testing.screenshot;
 
+import static org.fest.assertions.Assertions.assertThat;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
+import org.junit.Before;
+import org.junit.Test;
+
 /**
- * An unexpected error.
+ * Tests for <code>{@link Display#sizeOfPrimary()}</code>.
  *
  * @author Alex Ruiz
  */
-public class UnexpectedError extends RuntimeException {
+public class Display_sizeOfPrimary_Test {
 
-  private static final long serialVersionUID = 1L;
+  private Display display;
 
-  /**
-   * Creates a new </code>{@link UnexpectedError}</code>.
-   * @param message the detail message.
-   * @param cause the cause of the error.
-   */
-  public UnexpectedError(String message, Throwable cause) {
-    super(message, cause);
+  @Before public void setUp() {
+    display = Display.instance();
+  }
+
+  @Test public void should_return_size_of_primary_screen() {
+    Dimension size = display.sizeOfPrimary();
+    assertThat(size).isEqualTo(Toolkit.getDefaultToolkit().getScreenSize());
   }
 }

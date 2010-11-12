@@ -16,7 +16,8 @@ package org.fest.ui.testing.screenshot;
 
 import static java.util.logging.Level.WARNING;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.util.logging.Logger;
 
@@ -43,20 +44,29 @@ public class ScreenshotTaker {
 
   private final ImageFileWriter writer;
   private final ImageFilePathValidator pathValidator;
-  private Robot robot;
+  private final Display display;
+  private final Robot robot;
 
   private ScreenshotTaker() {
-    this(new ImageFileWriter(), ImageFilePathValidator.instance(), RobotFactory.instance());
+    this(new ImageFileWriter(), ImageFilePathValidator.instance(), Display.instance());
   }
 
-  @VisibleForTesting ScreenshotTaker(ImageFileWriter writer, ImageFilePathValidator pathValidator, RobotFactory robotFactory) {
+  @VisibleForTesting
+  ScreenshotTaker(ImageFileWriter writer, ImageFilePathValidator pathValidator, Display display) {
     this.writer = writer;
     this.pathValidator = pathValidator;
+    this.display = display;
+    this.robot = robot(display);
+  }
+
+  private static Robot robot(Display display) {
+    Robot robot = null;
     try {
-      robot = robotFactory.newRobotInPrimaryScreen();
+      robot = display.newRobotInPrimary();
     } catch (Throwable t) {
       logger.log(WARNING, "Unable to create an AWT Robot", t);
     }
+    return robot;
   }
 
   /**
@@ -68,16 +78,15 @@ public class ScreenshotTaker {
   public void saveDesktopAsPng(String path) {
     pathValidator.validate(path);
     if (robot == null) return;
-    BufferedImage screenshot = screenshotOfDesktop();
     try {
-      writer.writeAsPng(screenshot, path);
+      writer.writeAsPng(screenshotOfDesktop(), path);
     } catch (Throwable t) {
-      logger.log(WARNING, "Unable to save the screenshot as a file", t);
+      logger.log(WARNING, "Unable to take the screenshot and save it as a file", t);
     }
   }
 
   private BufferedImage screenshotOfDesktop() {
-    Rectangle r = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+    Rectangle r = new Rectangle(display.sizeOfPrimary());
     return robot.createScreenCapture(r);
   }
 }

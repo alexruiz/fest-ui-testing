@@ -14,23 +14,22 @@
  */
 package org.fest.ui.testing.screenshot;
 
-import java.awt.AWTException;
-import java.awt.Robot;
+import java.awt.*;
 
 /**
- * Creates AWT <code>{@link Robot}</code>s.
+ * Utilities related to the primary display.
  *
  * @author Alex Ruiz
  */
-class RobotFactory {
+class Display {
 
-  private static RobotFactory INSTANCE = new RobotFactory();
+  private static Display INSTANCE = new Display();
 
-  static RobotFactory instance() {
+  static Display instance() {
     return INSTANCE;
   }
 
-  private RobotFactory() {}
+  private Display() {}
 
   /**
    * Constructs a <code>{@link Robot}</code> object in the coordinate system of the primary screen.
@@ -39,7 +38,11 @@ class RobotFactory {
    * thrown when {@code GraphicsEnvironment.isHeadless()} returns {@code true}.
    * @throws SecurityException if {@code createRobot} permission is not granted.
    */
-  Robot newRobotInPrimaryScreen() throws AWTException {
+  Robot newRobotInPrimary() throws AWTException {
     return new Robot();
+  }
+
+  Dimension sizeOfPrimary() {
+    return Toolkit.getDefaultToolkit().getScreenSize();
   }
 }
