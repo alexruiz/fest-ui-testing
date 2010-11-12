@@ -16,13 +16,13 @@ package org.fest.ui.testing.junit.rule;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.method;
+import static org.fest.ui.testing.junit.rule.SystemProperties.fileSeparator;
 import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.fest.ui.testing.junit.rule.ScreenshotFilePathCreator;
 import org.fest.ui.testing.junit.test.FakeTestClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public class ScreenshotFilePathCreator_filePathFrom_Test {
   @Before public void setUp() {
     type = FakeTestClass.class;
     parentFolder = mock(File.class);
-    pathCreator = new ScreenshotFilePathCreator(parentFolder, new SystemProperties("/"));
+    pathCreator = new ScreenshotFilePathCreator(parentFolder, fileSeparator("/"));
   }
 
   @Test public void should_create_path_for_method_with_no_parameters() throws IOException {

@@ -16,12 +16,12 @@ package org.fest.ui.testing.junit.rule;
 
 import static java.util.UUID.randomUUID;
 import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.ui.testing.junit.rule.SystemProperties.fileSeparator;
 import static org.fest.util.Files.temporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.fest.ui.testing.junit.rule.FolderCreator;
 import org.junit.*;
 
 /**
@@ -40,7 +40,7 @@ public class FolderCreator_createFolder_Test {
   @Before public void setUp() {
     parentFolder = temporaryFolder();
     newFolderName = randomUUID().toString();
-    folderCreator = new FolderCreator(new SystemProperties("/"));
+    folderCreator = new FolderCreator(fileSeparator("/"));
   }
 
   @After public void tearDown() {

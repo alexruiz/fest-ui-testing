@@ -26,22 +26,22 @@ import org.fest.util.VisibleForTesting;
 class SystemProperties {
 
   private static final SystemProperties INSTANCE = new SystemProperties();
-  
-  private final String fileSeparator;
-  
+
+  private String fileSeparator = separator;
+
   static SystemProperties instance() {
     return INSTANCE;
   }
-  
+
+  @VisibleForTesting static SystemProperties fileSeparator(String fileSeparator) {
+    SystemProperties properties = new SystemProperties();
+    properties.fileSeparator = fileSeparator;
+    return properties;
+  }
+
   String fileSeparator() {
     return fileSeparator;
   }
-  
-  private SystemProperties() {
-    this(separator);
-  }
-  
-  @VisibleForTesting SystemProperties(String fileSeparator) {
-    this.fileSeparator = fileSeparator;
-  }
+
+  private SystemProperties() {}
 }
