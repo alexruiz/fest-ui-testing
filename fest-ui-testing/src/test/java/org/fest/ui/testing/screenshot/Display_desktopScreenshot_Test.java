@@ -14,29 +14,35 @@
  */
 package org.fest.ui.testing.screenshot;
 
+import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
 import static org.fest.assertions.Assertions.assertThat;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 /**
- * Tests for <code>{@link DisplayOld#sizeOfPrimary()}</code>.
+ * Tests for <code>{@link Display#desktopScreenshot()}</code>.
  *
  * @author Alex Ruiz
  */
-public class Display_sizeOfPrimary_Test {
+public class Display_desktopScreenshot_Test {
 
-  private DisplayOld display;
-
-  @Before public void setUp() {
-    display = DisplayOld.instance();
+  private GraphicsDevice device;
+  private Display display;
+  
+  @Before public void setUp() throws AWTException {
+    device = getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    display = new Display(device);
+  }
+  
+  @Test public void should_take_screenshot_of_desktop() {
+    BufferedImage screenshot = display.desktopScreenshot();
+    assertThat(screenshot).hasSize(screenSize());
   }
 
-  @Test public void should_return_size_of_primary_screen() {
-    Dimension size = display.sizeOfPrimary();
-    assertThat(size).isEqualTo(Toolkit.getDefaultToolkit().getScreenSize());
+  private Dimension screenSize() {
+    return device.getDefaultConfiguration().getBounds().getSize();
   }
 }

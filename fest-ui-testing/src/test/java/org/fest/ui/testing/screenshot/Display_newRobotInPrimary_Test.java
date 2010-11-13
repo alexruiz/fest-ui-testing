@@ -23,16 +23,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests for <code>{@link Display#newRobotInPrimary()}</code>.
+ * Tests for <code>{@link DisplayOld#newRobotInPrimary()}</code>.
  *
  * @author Alex Ruiz
  */
 public class Display_newRobotInPrimary_Test {
 
-  private Display display;
+  private DisplayOld display;
 
   @Before public void setUp() {
-    display = Display.instance();
+    display = DisplayOld.instance();
   }
 
   @Test public void should_create_new_Robot() throws AWTException {

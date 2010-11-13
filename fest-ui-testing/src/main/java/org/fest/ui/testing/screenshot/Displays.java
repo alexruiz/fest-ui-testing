@@ -14,30 +14,38 @@
  */
 package org.fest.ui.testing.screenshot;
 
+import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.*;
+import java.util.List;
 
 import org.fest.util.VisibleForTesting;
 
 /**
+ * Represents all the displays a system may have.
+ *
  * @author Alex Ruiz
  */
-class Display {
-  
-  private final Robot robot;
-  private final GraphicsDevice device;
+public class Displays {
 
-  Display(GraphicsDevice device) throws AWTException {
-    this(new Robot(device), device);
+  private final List<Display> displays;
+  
+  public Displays() throws AWTException {
+    this(getLocalGraphicsEnvironment().getScreenDevices());
   }
   
-  @VisibleForTesting Display(Robot robot, GraphicsDevice device) {
-    this.robot = robot;
-    this.device = device;
+  @VisibleForTesting Displays(GraphicsDevice[] devices) throws AWTException {
+    displays = new ArrayList<Display>(devices.length);
+    for (GraphicsDevice device : devices) displays.add(new Display(device));
   }
 
-  BufferedImage desktopScreenshot() {
-    Rectangle r = device.getDefaultConfiguration().getBounds();
-    return robot.createScreenCapture(r);
+  public BufferedImage[] desktopScreenshots() {
+    int displayCount = displays.size();
+    BufferedImage[] images = new BufferedImage[displayCount];
+    for (int i = 0; i < displayCount; i++) 
+      images[i] = displays.get(i).desktopScreenshot();
+    return images;
   }
 }

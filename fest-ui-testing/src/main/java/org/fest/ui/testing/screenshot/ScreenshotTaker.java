@@ -44,22 +44,22 @@ public class ScreenshotTaker {
 
   private final ImageFileWriter writer;
   private final ImageFilePathValidator pathValidator;
-  private final Display display;
+  private final DisplayOld display;
   private final Robot robot;
 
   private ScreenshotTaker() {
-    this(new ImageFileWriter(), ImageFilePathValidator.instance(), Display.instance());
+    this(new ImageFileWriter(), ImageFilePathValidator.instance(), DisplayOld.instance());
   }
 
   @VisibleForTesting
-  ScreenshotTaker(ImageFileWriter writer, ImageFilePathValidator pathValidator, Display display) {
+  ScreenshotTaker(ImageFileWriter writer, ImageFilePathValidator pathValidator, DisplayOld display) {
     this.writer = writer;
     this.pathValidator = pathValidator;
     this.display = display;
     this.robot = robot(display);
   }
 
-  private static Robot robot(Display display) {
+  private static Robot robot(DisplayOld display) {
     Robot robot = null;
     try {
       robot = display.newRobotInPrimary();
