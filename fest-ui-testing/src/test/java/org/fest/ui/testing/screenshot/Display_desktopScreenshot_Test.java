@@ -34,7 +34,7 @@ public class Display_desktopScreenshot_Test {
   
   @Before public void setUp() throws AWTException {
     device = getLocalGraphicsEnvironment().getDefaultScreenDevice();
-    display = new Display(device);
+    display = new Display(RobotFactory.instance(), device);
   }
   
   @Test public void should_take_screenshot_of_desktop() {

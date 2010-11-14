@@ -1,5 +1,5 @@
 /*
- * Created on Nov 12, 2010
+ * Created on Nov 13, 2010
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -15,23 +15,24 @@
 package org.fest.ui.testing.screenshot;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /**
+ * Factory of <code>{@link Robot}</code>s.
+ *
  * @author Alex Ruiz
  */
-class Display {
+class RobotFactory {
 
-  private final Robot robot;
-  private final GraphicsDevice screen;
-
-  Display(RobotFactory robotFactory, GraphicsDevice screen) throws AWTException {
-    this.robot = robotFactory.createRobot(screen);
-    this.screen = screen;
+  private static final RobotFactory INSTANCE = new RobotFactory();
+  
+  static RobotFactory instance() {
+    return INSTANCE;
   }
-
-  BufferedImage desktopScreenshot() {
-    Rectangle r = screen.getDefaultConfiguration().getBounds();
-    return robot.createScreenCapture(r);
+  
+  Robot createRobot(GraphicsDevice screen) throws AWTException {
+    return new Robot(screen);
   }
+  
+  private RobotFactory() {}
+
 }

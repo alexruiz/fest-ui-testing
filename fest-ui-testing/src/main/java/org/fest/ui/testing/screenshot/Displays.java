@@ -14,12 +14,12 @@
  */
 package org.fest.ui.testing.screenshot;
 
-import static java.util.Collections.unmodifiableList;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
+
+import org.fest.util.VisibleForTesting;
 
 /**
  * Represents all the displays a system may have.
@@ -28,23 +28,23 @@ import java.util.List;
  */
 public class Displays {
 
-  private final List<Display> displays;
+  @VisibleForTesting final List<Display> displays;
 
-  public Displays(GraphicsEnvironment environment) throws AWTException {
-    GraphicsDevice[] devices = environment.getScreenDevices();
-    displays = new ArrayList<Display>(devices.length);
-    for (GraphicsDevice device : devices) displays.add(new Display(device));
+  public Displays(RobotFactory robotFactory, GraphicsEnvironment environment) throws AWTException {
+    GraphicsDevice[] screens = environment.getScreenDevices();
+    displays = new ArrayList<Display>(screens.length);
+    for (GraphicsDevice screen : screens) displays.add(new Display(robotFactory, screen));
   }
-
+  
+  @VisibleForTesting Displays(List<Display> displays) {
+    this.displays = new ArrayList<Display>(displays);
+  }
+  
   public BufferedImage[] desktopScreenshots() {
     int displayCount = displays.size();
     BufferedImage[] images = new BufferedImage[displayCount];
     for (int i = 0; i < displayCount; i++)
       images[i] = displays.get(i).desktopScreenshot();
     return images;
-  }
-
-  List<Display> displays() {
-    return unmodifiableList(displays);
   }
 }
