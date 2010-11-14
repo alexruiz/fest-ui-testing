@@ -28,15 +28,15 @@ import org.fest.util.VisibleForTesting;
  *
  * @author Alex Ruiz
  */
-public class ScreenshotTaker {
+public class DesktopCamera {
 
-  private static final ScreenshotTaker INSTANCE = new ScreenshotTaker();
+  private static final DesktopCamera INSTANCE = new DesktopCamera();
 
   /**
    * Returns the singleton instance of this class.
    * @return the singleton instance of this class.
    */
-  public static ScreenshotTaker instance() {
+  public static DesktopCamera instance() {
     return INSTANCE;
   }
 
@@ -47,12 +47,12 @@ public class ScreenshotTaker {
   private final DisplayOld display;
   private final Robot robot;
 
-  private ScreenshotTaker() {
+  private DesktopCamera() {
     this(new ImageFileWriter(), ImageFilePathValidator.instance(), DisplayOld.instance());
   }
 
   @VisibleForTesting
-  ScreenshotTaker(ImageFileWriter writer, ImageFilePathValidator pathValidator, DisplayOld display) {
+  DesktopCamera(ImageFileWriter writer, ImageFilePathValidator pathValidator, DisplayOld display) {
     this.writer = writer;
     this.pathValidator = pathValidator;
     this.display = display;

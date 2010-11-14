@@ -16,22 +16,17 @@ package org.fest.ui.testing.junit.rule;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-import org.junit.*;
+import org.junit.Test;
 
 /**
- * Tests for <code>{@link FolderCreator#instance()}</code>.
+ * Tests for <code>{@link FolderFactory#instance()}</code>.
  *
  * @author Alex Ruiz
  */
-public class FolderCreator_instance_Test {
+public class FolderFactory_instance_Test {
 
-  private FolderCreator folderCreator;
-
-  @Before public void setUp() {
-    folderCreator = FolderCreator.instance();
-  }
-
-  @Test public void should_have_a_default_SystemProperties() {
-    assertThat(folderCreator.system).isSameAs(SystemProperties.instance());
+  @Test public void should_return_FolderFactory_with_a_singleton_SystemProperties() {
+    FolderFactory folderFactory = FolderFactory.instance();
+    assertThat(folderFactory.system).isSameAs(SystemProperties.instance());
   }
 }

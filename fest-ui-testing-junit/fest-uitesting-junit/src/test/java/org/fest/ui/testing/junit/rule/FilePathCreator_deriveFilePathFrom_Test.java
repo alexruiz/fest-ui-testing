@@ -28,40 +28,40 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests for <code>{@link ScreenshotFilePathCreator#filePathFrom(Class, Method)}</code>.
+ * Tests for <code>{@link FilePathFactory#deriveFilePathFrom(Class, Method)}</code>.
  *
  * @author Alex Ruiz
  */
-public class ScreenshotFilePathCreator_filePathFrom_Test {
+public class FilePathCreator_deriveFilePathFrom_Test {
 
   private Class<?> type;
   private File parentFolder;
-  private ScreenshotFilePathCreator pathCreator;
+  private FilePathFactory pathCreator;
 
   @Before public void setUp() {
     type = FakeTestClass.class;
     parentFolder = mock(File.class);
-    pathCreator = new ScreenshotFilePathCreator(parentFolder, fileSeparator("/"));
+    pathCreator = new FilePathFactory(parentFolder, fileSeparator("/"));
   }
 
   @Test public void should_create_path_for_method_with_no_parameters() throws IOException {
     Method m = method("noParameters").in(type).info();
     when(parentFolder.getCanonicalPath()).thenReturn("/tmp");
-    String createdPath = pathCreator.filePathFrom(type, m);
+    String createdPath = pathCreator.deriveFilePathFrom(type, m);
     assertThat(createdPath).isEqualTo("/tmp/org.fest.ui.testing.junit.test.FakeTestClass.noParameters.png");
   }
 
   @Test public void should_create_path_for_method_with_one_parameter() throws IOException {
     Method m = method("oneParameter").withParameterTypes(float.class).in(type).info();
     when(parentFolder.getCanonicalPath()).thenReturn("/tmp");
-    String createdPath = pathCreator.filePathFrom(type, m);
+    String createdPath = pathCreator.deriveFilePathFrom(type, m);
     assertThat(createdPath).isEqualTo("/tmp/org.fest.ui.testing.junit.test.FakeTestClass.oneParameter(float).png");
   }
 
   @Test public void should_create_path_for_method_with_multiple_parameters() throws IOException {
     Method m = method("multipleParameters").withParameterTypes(String.class, int.class).in(type).info();
     when(parentFolder.getCanonicalPath()).thenReturn("/tmp");
-    String createdPath = pathCreator.filePathFrom(type, m);
+    String createdPath = pathCreator.deriveFilePathFrom(type, m);
     assertThat(createdPath).isEqualTo("/tmp/org.fest.ui.testing.junit.test.FakeTestClass.multipleParameters(java.lang.String, int).png");
   }
 }

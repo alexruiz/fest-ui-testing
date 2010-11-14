@@ -21,30 +21,28 @@ import static org.mockito.Mockito.*;
 import java.io.File;
 import java.io.IOException;
 
-import org.fest.ui.testing.junit.rule.FolderCreator;
-import org.fest.ui.testing.junit.rule.ScreenshotsFolderCreator;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests for <code>{@link ScreenshotsFolderCreator#createScreenshotsFolder()}</code>.
+ * Tests for <code>{@link ScreenshotsFolderFactory#createFolderForScreenshots()}</code>.
  *
  * @author Alex Ruiz
  */
-public class ScreenshotsFolderCreator_createScreenshotsFolder_Test {
+public class ScreenshotsFolderFactory_createFolderForScreenshots_Test {
 
-  private FolderCreator folderCreator;
-  private ScreenshotsFolderCreator screenshotsFolderCreator;
+  private FolderFactory folderFactory;
+  private ScreenshotsFolderFactory screenshotsFolderFactory;
 
   @Before public void setUp() {
-    folderCreator = mock(FolderCreator.class);
-    screenshotsFolderCreator = new ScreenshotsFolderCreator(folderCreator);
+    folderFactory = mock(FolderFactory.class);
+    screenshotsFolderFactory = new ScreenshotsFolderFactory(folderFactory);
   }
 
   @Test public void should_create_folder_for_screenshots() throws IOException {
-    File folderToCreate = new File("fake");
-    when(folderCreator.createFolder(currentFolder(), "failed-gui-tests")).thenReturn(folderToCreate);
-    File createdFolder = screenshotsFolderCreator.createScreenshotsFolder();
+    File folderToCreate = mock(File.class);
+    when(folderFactory.createFolder(currentFolder(), "failed-gui-tests")).thenReturn(folderToCreate);
+    File createdFolder = screenshotsFolderFactory.createFolderForScreenshots();
     assertThat(createdFolder).isSameAs(folderToCreate);
   }
 }

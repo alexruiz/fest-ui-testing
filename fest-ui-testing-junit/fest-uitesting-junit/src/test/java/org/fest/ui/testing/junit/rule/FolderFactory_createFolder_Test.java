@@ -17,7 +17,7 @@ package org.fest.ui.testing.junit.rule;
 import static java.util.UUID.randomUUID;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.ui.testing.junit.rule.SystemProperties.fileSeparator;
-import static org.fest.util.Files.temporaryFolder;
+import static org.fest.util.Files.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,31 +25,35 @@ import java.io.IOException;
 import org.junit.*;
 
 /**
- * Tests for <code>{@link FolderCreator#createFolder(File, String)}</code>.
+ * Tests for <code>{@link FolderFactory#createFolder(File, String)}</code>.
  *
  * @author Alex Ruiz
  */
-public class FolderCreator_createFolder_Test {
+public class FolderFactory_createFolder_Test {
 
   private File parentFolder;
   private String newFolderName;
   private File createdFolder;
 
-  private FolderCreator folderCreator;
+  private FolderFactory folderFactory;
 
   @Before public void setUp() {
     parentFolder = temporaryFolder();
     newFolderName = randomUUID().toString();
-    folderCreator = new FolderCreator(fileSeparator("/"));
+    folderFactory = new FolderFactory(fileSeparator("/"));
   }
 
   @After public void tearDown() {
-    if (createdFolder != null && createdFolder.isDirectory()) createdFolder.delete();
+    if (createdFolder != null && createdFolder.isDirectory()) delete(createdFolder);
   }
 
   @Test public void should_create_folder() throws IOException {
-    createdFolder = folderCreator.createFolder(parentFolder, newFolderName);
+    createdFolder = folderFactory.createFolder(parentFolder, newFolderName);
     assertThat(createdFolder.getName()).isEqualTo(newFolderName);
-    assertThat(createdFolder.getParentFile().getCanonicalPath()).isEqualTo(parentFolder.getCanonicalPath());
+    assertThat(pathOf(createdFolder.getParentFile())).isEqualTo(pathOf(parentFolder));
+  }
+
+  private String pathOf(File f) throws IOException {
+    return f.getCanonicalPath();
   }
 }

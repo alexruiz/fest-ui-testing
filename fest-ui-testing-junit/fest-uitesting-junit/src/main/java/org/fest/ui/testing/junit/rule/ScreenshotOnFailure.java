@@ -18,9 +18,12 @@ import static java.util.logging.Level.WARNING;
 import static java.util.logging.Logger.getAnonymousLogger;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 import org.fest.ui.testing.junit.category.GuiTest;
+import org.fest.ui.testing.junit.category.GuiTestFilter;
+import org.fest.ui.testing.screenshot.DesktopCamera;
 import org.fest.util.VisibleForTesting;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
@@ -36,26 +39,68 @@ public class ScreenshotOnFailure implements MethodRule {
 
   private static Logger logger = getAnonymousLogger();
 
-  @VisibleForTesting final ScreenshotFilePathCreator pathCreator;
+  @VisibleForTesting final FilePathFactory pathFactory;
 
   public static ScreenshotOnFailure newRule() {
-    ScreenshotFilePathCreator pathCreator = null;
+    FilePathFactory pathFactory = null;
     try {
-      File parentFolder = ScreenshotsFolderCreator.instance().createScreenshotsFolder();
-      pathCreator = new ScreenshotFilePathCreator(parentFolder);
-    } catch (Exception e) {
-      logger.log(WARNING, "Unable to create the folder where to store screenshots", e);
+      File parentFolder = ScreenshotsFolderFactory.instance().createFolderForScreenshots();
+      pathFactory = new FilePathFactory(parentFolder);
+    } catch (Throwable t) {
+      logger.log(WARNING, "Unable to create the folder where to store screenshots", t);
     }
-    return new ScreenshotOnFailure(pathCreator);
+    return new ScreenshotOnFailure(pathFactory);
   }
 
-  @VisibleForTesting ScreenshotOnFailure(ScreenshotFilePathCreator pathCreator) {
-    this.pathCreator = pathCreator;
+  @VisibleForTesting ScreenshotOnFailure(FilePathFactory pathFactory) {
+    this.pathFactory = pathFactory;
   }
 
-  // TODO document
-  public Statement apply(Statement base, FrameworkMethod method, Object target) {
-    if (pathCreator == null) return base;
-    return new ScreenshotOnFailureStatement(base, method, pathCreator);
+  /**
+   * Modifies the given method-running {@code {@link Statement}} to take a screenshot of the desktop if the execution of
+   * the test method fails.
+   * @param base the {@code Statement} to be modified.
+   * @param method the method to be run.
+   * @param target the object on with the method will be run.
+   * @return a new statement, which may be the same as {@code base} if it is not possible to create the folder where
+   * the screenshot will be stored or a wrapper around {@code base} that takes a screenshot of the desktop if the
+   * execution of the test method fails.
+   */
+  public Statement apply(Statement baseStatement, FrameworkMethod method, Object target) {
+    if (pathFactory == null) return baseStatement;
+    return new ScreenshotOnFailureStatement(baseStatement, method);
+  }
+
+  class ScreenshotOnFailureStatement extends Statement {
+    private final Statement baseStatement;
+    private final FrameworkMethod method;
+
+    @VisibleForTesting GuiTestFilter guiTestFilter = GuiTestFilter.instance();
+    @VisibleForTesting DesktopCamera desktopCamera = DesktopCamera.instance();
+
+    ScreenshotOnFailureStatement(Statement baseStatement, FrameworkMethod method) {
+      this.baseStatement = baseStatement;
+      this.method = method;
+    }
+
+    @Override public void evaluate() throws Throwable {
+      try {
+        baseStatement.evaluate();
+      } catch (Throwable t) {
+        takeScreenshotIfApplicable();
+        throw t;
+      }
+    }
+
+    private void takeScreenshotIfApplicable() {
+      try {
+        if (!guiTestFilter.isGuiTest(method)) return;
+        Method realMethod = method.getMethod();
+        String path = pathFactory.deriveFilePathFrom(realMethod.getDeclaringClass(), realMethod);
+        desktopCamera.saveDesktopAsPng(path);
+      } catch (Throwable t) {
+        logger.log(WARNING, "Unable to take screenshot of the desktop", t);
+      }
+    }
   }
 }

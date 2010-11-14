@@ -18,7 +18,7 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.ui.testing.junit.rule.ScreenshotOnFailure.newRule;
 import static org.mockito.Mockito.mock;
 
-import org.fest.ui.testing.junit.rule.ScreenshotOnFailure;
+import org.fest.ui.testing.junit.rule.ScreenshotOnFailure.ScreenshotOnFailureStatement;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
@@ -31,28 +31,25 @@ import org.junit.runners.model.Statement;
  */
 public class ScreenshotOnFailure_apply_Test {
 
-  private static Statement base;
+  private static Statement baseStatement;
   private static FrameworkMethod method;
 
   private ScreenshotOnFailure rule;
 
   @BeforeClass public static void setUpOnce() {
-    base = mock(Statement.class);
+    baseStatement = mock(Statement.class);
     method = mock(FrameworkMethod.class);
   }
 
   @Test public void should_return_a_ScreenshotOnFailureStatement() {
     rule = newRule();
-    Statement applied = rule.apply(base, method, new Object());
+    Statement applied = rule.apply(baseStatement, method, new Object());
     assertThat(applied).isInstanceOf(ScreenshotOnFailureStatement.class);
-    ScreenshotOnFailureStatement statement = (ScreenshotOnFailureStatement) applied;
-    assertThat(statement.base).isSameAs(base);
-    assertThat(statement.method).isSameAs(method);
   }
 
-  @Test public void should_return_base_Statement_if_ScreenshotFilePathCreator_is_null() {
+  @Test public void should_return_base_Statement_if_FilePathFactory_is_null() {
     rule = new ScreenshotOnFailure(null);
-    Statement applied = rule.apply(base, method, new Object());
-    assertThat(applied).isSameAs(base);
+    Statement applied = rule.apply(baseStatement, method, new Object());
+    assertThat(applied).isSameAs(baseStatement);
   }
 }

@@ -28,32 +28,33 @@ import org.fest.util.VisibleForTesting;
  *
  * @author Alex Ruiz
  */
-final class ScreenshotsFolderCreator {
+final class ScreenshotsFolderFactory {
 
-  private static final ScreenshotsFolderCreator INSTANCE = new ScreenshotsFolderCreator();
+  private static final ScreenshotsFolderFactory INSTANCE = new ScreenshotsFolderFactory();
 
-  static ScreenshotsFolderCreator instance() {
+  static ScreenshotsFolderFactory instance() {
     return INSTANCE;
   }
 
-  private final FolderCreator folderCreator;
+  private final FolderFactory folderCreator;
 
-  private ScreenshotsFolderCreator() {
-    this(FolderCreator.instance());
+  private ScreenshotsFolderFactory() {
+    this(FolderFactory.instance());
   }
 
-  @VisibleForTesting ScreenshotsFolderCreator(FolderCreator folderCreator) {
+  @VisibleForTesting ScreenshotsFolderFactory(FolderFactory folderCreator) {
     this.folderCreator = folderCreator;
   }
 
   /**
-   * Creates the folder where to save screenshots of failing GUI tests. The folder will be created only if one with the
-   * given name does not exist. If there is a non-directory file with the same name as the folder to create, such file
-   * will be deleted and a folder will be created instead.
+   * Creates the folder where to save screenshots of failing GUI tests. The name of the folder to create is
+   * "failed-gui-tests." The folder will be created only if one with the given name does not exist. If there is a
+   * non-directory file with the same name as the folder to create, such file will be deleted and a folder will be
+   * created instead.
    * @return the created folder.
    * @throws FilesException if any I/O error occurs while creating the folder.
    */
-  File createScreenshotsFolder() throws IOException {
+  File createFolderForScreenshots() throws IOException {
     return folderCreator.createFolder(currentFolder(), "failed-gui-tests");
   }
 }

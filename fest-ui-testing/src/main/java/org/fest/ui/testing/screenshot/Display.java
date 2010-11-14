@@ -17,22 +17,16 @@ package org.fest.ui.testing.screenshot;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import org.fest.util.VisibleForTesting;
-
 /**
  * @author Alex Ruiz
  */
 class Display {
-  
+
   private final Robot robot;
   private final GraphicsDevice device;
 
   Display(GraphicsDevice device) throws AWTException {
-    this(new Robot(device), device);
-  }
-  
-  @VisibleForTesting Display(Robot robot, GraphicsDevice device) {
-    this.robot = robot;
+    this.robot = new Robot(device);
     this.device = device;
   }
 

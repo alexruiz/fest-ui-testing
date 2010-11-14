@@ -58,6 +58,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.8.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.googlecode.multithreadedtc</groupId>
       <artifactId>multithreadedtc</artifactId>
       <version>1.01</version>

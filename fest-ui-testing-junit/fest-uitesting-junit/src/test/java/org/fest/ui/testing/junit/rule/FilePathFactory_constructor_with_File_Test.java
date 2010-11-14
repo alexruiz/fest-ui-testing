@@ -19,24 +19,17 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 
-import org.junit.*;
+import org.junit.Test;
 
 /**
- * Tests for <code>{@link ScreenshotFilePathCreator#ScreenshotFilePathCreator(File)}</code>.
+ * Tests for <code>{@link FilePathFactory#ScreenshotFilePathCreator(File)}</code>.
  *
  * @author Alex Ruiz
  */
-public class ScreenshotFilePathCreator_constructor_Test {
+public class FilePathFactory_constructor_with_File_Test {
 
-  private File parentFolder;
-  private ScreenshotFilePathCreator pathCreator;
-
-  @Before public void setUp() {
-    parentFolder = mock(File.class);
-    pathCreator = new ScreenshotFilePathCreator(parentFolder);
-  }
-
-  @Test public void should_have_a_default_SystemProperties() {
-    assertThat(pathCreator.system).isSameAs(SystemProperties.instance());
+  @Test public void should_create_FilePathFactory_with_singleton_SystemProperties() {
+    FilePathFactory pathFactory = new FilePathFactory(mock(File.class));
+    assertThat(pathFactory.system).isSameAs(SystemProperties.instance());
   }
 }

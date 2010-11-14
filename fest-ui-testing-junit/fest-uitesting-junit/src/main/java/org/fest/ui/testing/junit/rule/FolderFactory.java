@@ -26,21 +26,21 @@ import org.fest.util.VisibleForTesting;
  *
  * @author Alex Ruiz
  */
-class FolderCreator {
+class FolderFactory {
 
-  private static final FolderCreator INSTANCE = new FolderCreator();
+  private static final FolderFactory INSTANCE = new FolderFactory();
 
-  static FolderCreator instance() {
+  static FolderFactory instance() {
     return INSTANCE;
   }
   
   @VisibleForTesting final SystemProperties system;
 
-  private FolderCreator() {
+  private FolderFactory() {
     this(SystemProperties.instance());
   }
 
-  @VisibleForTesting FolderCreator(SystemProperties system) {
+  @VisibleForTesting FolderFactory(SystemProperties system) {
     this.system = system;
   }
 

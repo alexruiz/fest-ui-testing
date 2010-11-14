@@ -21,8 +21,8 @@ import static org.mockito.Mockito.*;
 import java.lang.reflect.Method;
 
 import org.fest.ui.testing.junit.category.GuiTestFilter;
-import org.fest.ui.testing.junit.rule.ScreenshotFilePathCreator;
-import org.fest.ui.testing.screenshot.ScreenshotTaker;
+import org.fest.ui.testing.junit.rule.ScreenshotOnFailure.ScreenshotOnFailureStatement;
+import org.fest.ui.testing.screenshot.DesktopCamera;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.model.FrameworkMethod;
@@ -40,11 +40,9 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
   private static Throwable toBeThrown;
   private static Method realMethod;
 
-  private Statement base;
+  private Statement baseStatement;
   private FrameworkMethod method;
-  private ScreenshotFilePathCreator pathCreator;
-  private GuiTestFilter filter;
-  private ScreenshotTaker screenshotTaker;
+  private FilePathFactory pathFactory;
 
   private ScreenshotOnFailureStatement statement;
 
@@ -54,47 +52,46 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
   }
 
   @Before public void setUp() {
-    base = mock(Statement.class);
+    baseStatement = mock(Statement.class);
     method = mock(FrameworkMethod.class);
-    pathCreator = mock(ScreenshotFilePathCreator.class);
-    statement = new ScreenshotOnFailureStatement(base, method, pathCreator);
-    filter = mock(GuiTestFilter.class);
-    screenshotTaker = mock(ScreenshotTaker.class);
-    statement.guiTestFilter = filter;
-    statement.screenshotTaker = screenshotTaker;
+    pathFactory = mock(FilePathFactory.class);
+    ScreenshotOnFailure rule = new ScreenshotOnFailure(pathFactory);
+    statement = (ScreenshotOnFailureStatement) rule.apply(baseStatement, method, new Object());
+    statement.guiTestFilter = mock(GuiTestFilter.class);
+    statement.desktopCamera = mock(DesktopCamera.class);
   }
 
   @Test public void should_not_take_screenshot_if_test_does_not_fail() throws Throwable {
     statement.evaluate();
-    verify(base).evaluate();
-    verifyZeroInteractions(method, pathCreator, filter, screenshotTaker);
+    verify(baseStatement).evaluate();
+    verifyZeroInteractions(method, pathFactory, statement.guiTestFilter, statement.desktopCamera);
   }
 
   @Test public void should_take_screenshot_if_failing_test_is_GuiTest() throws Throwable {
-    doThrow(toBeThrown).when(base).evaluate();
-    when(filter.isGuiTest(method)).thenReturn(true);
+    doThrow(toBeThrown).when(baseStatement).evaluate();
+    when(statement.guiTestFilter.isGuiTest(method)).thenReturn(true);
     when(method.getMethod()).thenReturn(realMethod);
     String path = "/tmp/blue.png";
-    when(pathCreator.filePathFrom(realMethod.getDeclaringClass(), realMethod)).thenReturn(path);
+    when(pathFactory.deriveFilePathFrom(realMethod.getDeclaringClass(), realMethod)).thenReturn(path);
     expectStatementFailure();
     statement.evaluate();
-    verify(screenshotTaker).saveDesktopAsPng(path);
+    verify(statement.desktopCamera).saveDesktopAsPng(path);
   }
 
   @Test public void should_not_take_screenshot_if_failing_test_is_not_GuiTest() throws Throwable {
-    doThrow(toBeThrown).when(base).evaluate();
-    when(filter.isGuiTest(method)).thenReturn(false);
+    doThrow(toBeThrown).when(baseStatement).evaluate();
+    when(statement.guiTestFilter.isGuiTest(method)).thenReturn(false);
     expectStatementFailure();
     statement.evaluate();
-    verifyZeroInteractions(method, pathCreator, screenshotTaker);
+    verifyZeroInteractions(method, pathFactory, statement.desktopCamera);
   }
 
   @Test public void should_not_lose_original_exception_if_screenshot_fails() throws Throwable {
-    doThrow(toBeThrown).when(base).evaluate();
-    when(filter.isGuiTest(method)).thenThrow(new RuntimeException("Thrown on purpose"));
+    doThrow(toBeThrown).when(baseStatement).evaluate();
+    when(statement.guiTestFilter.isGuiTest(method)).thenThrow(new RuntimeException("Thrown on purpose"));
     expectStatementFailure();
     statement.evaluate();
-    verifyZeroInteractions(method, pathCreator, screenshotTaker);
+    verifyZeroInteractions(method, pathFactory, statement.desktopCamera);
   }
 
   private void expectStatementFailure() {

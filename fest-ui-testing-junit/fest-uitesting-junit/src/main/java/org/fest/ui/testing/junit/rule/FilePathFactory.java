@@ -29,21 +29,21 @@ import org.fest.util.VisibleForTesting;
  * @author Alex Ruiz
  * @author Yvonne Wang
  */
-class ScreenshotFilePathCreator {
+class FilePathFactory {
 
   private final File parentFolder;
   @VisibleForTesting final SystemProperties system;
 
-  ScreenshotFilePathCreator(File parentFolder) {
+  FilePathFactory(File parentFolder) {
     this(parentFolder, SystemProperties.instance());
   }
   
-  @VisibleForTesting ScreenshotFilePathCreator(File parentFolder, SystemProperties system) {
+  @VisibleForTesting FilePathFactory(File parentFolder, SystemProperties system) {
     this.parentFolder = parentFolder;
     this.system = system;
   }
 
-  String filePathFrom(Class<?> type, Method method) throws IOException {
+  String deriveFilePathFrom(Class<?> type, Method method) throws IOException {
     String testName = testNameFrom(type, method);
     return concat(parentFolder.getCanonicalPath(), system.fileSeparator(), testName, ".", PNG);
   }
