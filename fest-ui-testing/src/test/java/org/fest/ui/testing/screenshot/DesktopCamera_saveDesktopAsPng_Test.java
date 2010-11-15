@@ -33,7 +33,7 @@ import org.junit.*;
  *
  * @author Alex Ruiz
  */
-public class DesktopCamera_saveDesktopAsPng_Manual {
+public class DesktopCamera_saveDesktopAsPng_Test {
 
   private List<String> filePaths;
   private DesktopCamera camera;
