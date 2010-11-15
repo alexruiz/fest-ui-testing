@@ -27,7 +27,7 @@ import org.junit.*;
  *
  * @author Alex Ruiz
  */
-public class Display_desktopScreenshot_Test {
+public class Display_desktopScreenshot_with_mocks_Test {
 
   private GraphicsDevice device;
   private Display display;
