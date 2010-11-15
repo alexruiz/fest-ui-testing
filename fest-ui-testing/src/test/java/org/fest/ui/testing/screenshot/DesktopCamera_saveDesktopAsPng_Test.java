@@ -54,7 +54,8 @@ public class DesktopCamera_saveDesktopAsPng_Test {
     int displayCount = displays.length;
     assertThat(filePaths).hasSize(displayCount);
     for (int i = 0; i < displayCount; i++) {
-      BufferedImage screenshot = read(filePaths.get(i));
+      String imageFilePath = filePaths.get(i);
+      BufferedImage screenshot = read(imageFilePath);
       assertThat(screenshot).hasSize(sizeOf(displays[i]));
     }
   }
