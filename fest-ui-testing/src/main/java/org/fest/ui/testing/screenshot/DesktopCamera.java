@@ -15,12 +15,16 @@
 package org.fest.ui.testing.screenshot;
 
 import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
+import static java.util.Collections.*;
 import static java.util.logging.Level.WARNING;
 import static java.util.logging.Logger.getAnonymousLogger;
 import static org.fest.ui.testing.screenshot.ImageFormats.PNG;
+import static org.fest.util.Collections.list;
 import static org.fest.util.Strings.*;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.fest.util.VisibleForTesting;
@@ -49,6 +53,7 @@ public class DesktopCamera {
     try {
       Displays displays = new Displays(RobotFactory.instance(), getLocalGraphicsEnvironment());
       camera = new DesktopCamera(ImageFileWriter.instance(), displays);
+      logger.info("DesktopCamera created successfully");
     } catch (Throwable t) {
       logger.log(WARNING, "Unable to create a DesktopCamera", t);
     }
@@ -76,23 +81,20 @@ public class DesktopCamera {
    * </p>
    * @param path the path of the file to save the screenshot to. It must not include the extension ".png" since this
    * method may add an index to {@code path} if the system has multiple displays.
+   * @return the path(s) of the screenshot file(s).
    * @throws NullPointerException if the given file path is {@code null}.
    * @throws IllegalArgumentException if the given file path is empty.
    */
-  public void saveDesktopAsPng(String path) {
+  public List<String> saveDesktopAsPng(String path) {
     String newPath = validate(path);
     try {
       BufferedImage[] screenshots = displays.desktopScreenshots();
-      int screenshotCount = screenshots.length;
-      if (screenshotCount == 1) {
-        writer.writeAsPng(screenshots[0], join(newPath, PNG).with("."));
-        return;
-      }
-      for (int i = 0; i < screenshotCount; i++)
-        writer.writeAsPng(screenshots[i], concat(newPath, Integer.toString(i), ".", PNG));
+      if (screenshots.length == 1) return singleScreenImage(newPath, screenshots[0]);
+      return unmodifiableList(multipleScreenImages(newPath, screenshots));
     } catch (Throwable t) {
       logger.log(WARNING, "Unable to take screenshot(s) of the desktop", t);
     }
+    return emptyList();
   }
 
   private String validate(String path) {
@@ -100,5 +102,22 @@ public class DesktopCamera {
     String newPath = path.trim();
     if (isEmpty(newPath)) throw new IllegalArgumentException("The path of the image(s) to save should not be empty");
     return newPath;
+  }
+
+  private List<String> singleScreenImage(String newPath, BufferedImage screenshot) throws IOException {
+    String fullPath = join(newPath, PNG).with(".");
+    writer.writeAsPng(screenshot, fullPath);
+    return unmodifiableList(list(fullPath));
+  }
+
+  private List<String> multipleScreenImages(String newPath, BufferedImage[] screenshots) throws IOException {
+    List<String> fullPaths = new ArrayList<String>();
+    int screenshotCount = screenshots.length;
+    for (int i = 0; i < screenshotCount; i++) {
+      String fullPath = concat(newPath, Integer.toString(i), ".", PNG);
+      writer.writeAsPng(screenshots[i], fullPath);
+      fullPaths.add(fullPath);
+    }
+    return fullPaths;
   }
 }

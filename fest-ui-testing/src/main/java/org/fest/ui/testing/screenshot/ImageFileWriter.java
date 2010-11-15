@@ -18,7 +18,7 @@ import static org.fest.ui.testing.screenshot.ImageFormats.PNG;
 import static org.fest.util.Files.newFile;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.*;
 
 import javax.imageio.ImageIO;
 
@@ -32,17 +32,19 @@ class ImageFileWriter {
   static ImageFileWriter instance() {
     return LazyLoader.INSTANCE;
   }
-  
+
   /**
-   * Saves an image as a PNG file to the file system. If there is already a <code>File</code> present, its contents are
-   * discarded.
+   * Saves an image as a PNG file to the file system. If there is already a file with the same name, it will be deleted
+   * and recreated.
    * @param image the {@code BufferedImage} to be saved.
    * @param filePath the path of the file to create.
    * @return {@code false} if the image could not be saved.
    * @exception IOException if an error occurs while saving the image.
    */
   boolean writeAsPng(BufferedImage image, String filePath) throws IOException {
-    return ImageIO.write(image, PNG, newFile(filePath));
+    File file = newFile(filePath);
+    if (file.isFile()) file.delete();
+    return ImageIO.write(image, PNG, file);
   }
 
   private ImageFileWriter() {}

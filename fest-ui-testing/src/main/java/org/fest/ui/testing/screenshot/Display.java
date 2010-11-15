@@ -31,7 +31,8 @@ class Display {
   }
 
   BufferedImage desktopScreenshot() {
-    Rectangle r = screen.getDefaultConfiguration().getBounds();
-    return robot.createScreenCapture(r);
+    Rectangle bounds = screen.getDefaultConfiguration().getBounds();
+    bounds.x = bounds.y = 0;
+    return robot.createScreenCapture(bounds);
   }
 }
