@@ -31,8 +31,6 @@ import org.junit.runners.model.FrameworkMethod;
  */
 public class GuiTestFilter {
 
-  private static final GuiTestFilter INSTANCE = new GuiTestFilter();
-  
   @VisibleForTesting final CategoryFilter categoryFilter;
 
   /**
@@ -40,7 +38,7 @@ public class GuiTestFilter {
    * @return the singleton instance of this class.
    */
   public static GuiTestFilter instance() {
-    return INSTANCE;
+    return LazyLoader.INSTANCE;
   }
 
   private GuiTestFilter() {
@@ -61,5 +59,9 @@ public class GuiTestFilter {
     Method realMethod = method.getMethod();
     Description d = createTestDescription(realMethod.getDeclaringClass(), method.getName(), method.getAnnotations());
     return categoryFilter.shouldRun(d);
+  }
+
+  private static class LazyLoader {
+    static final GuiTestFilter INSTANCE = new GuiTestFilter();
   }
 }

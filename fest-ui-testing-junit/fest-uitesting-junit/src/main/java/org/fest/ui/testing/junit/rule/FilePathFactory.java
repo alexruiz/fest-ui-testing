@@ -31,6 +31,8 @@ import org.fest.util.VisibleForTesting;
  */
 class FilePathFactory {
 
+  // TODO make singleton
+  
   private final File parentFolder;
   @VisibleForTesting final SystemProperties system;
 

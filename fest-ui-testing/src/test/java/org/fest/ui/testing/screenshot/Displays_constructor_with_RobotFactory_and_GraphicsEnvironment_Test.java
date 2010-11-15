@@ -26,7 +26,7 @@ import org.junit.*;
  *
  * @author Alex Ruiz
  */
-public class Displays_constructor_Test {
+public class Displays_constructor_with_RobotFactory_and_GraphicsEnvironment_Test {
 
   private RobotFactory robotFactory;
   private GraphicsEnvironment environment;
@@ -44,7 +44,7 @@ public class Displays_constructor_Test {
   @Test public void should_create_one_Screen_per_GraphicsDevice() throws AWTException {
     when(environment.getScreenDevices()).thenReturn(screens);
     Displays displays = new Displays(robotFactory, environment);
-    assertThat(displays.displays).hasSize(screenCount);
+    assertThat(displays.displays()).hasSize(screenCount);
     // TODO assert displays are not null
   }
 }

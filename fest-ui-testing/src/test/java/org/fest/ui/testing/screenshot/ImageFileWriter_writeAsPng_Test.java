@@ -43,7 +43,7 @@ public class ImageFileWriter_writeAsPng_Test {
   @Before public void setUp() {
     image = newImage(5, 5, BLUE);
     path = temporaryFolderPath() + randomUUID() + ".png";
-    writer = new ImageFileWriter();
+    writer = ImageFileWriter.instance();
   }
 
   @After public void tearDown() {

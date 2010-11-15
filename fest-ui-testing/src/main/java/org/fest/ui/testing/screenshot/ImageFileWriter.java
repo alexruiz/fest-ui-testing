@@ -29,6 +29,10 @@ import javax.imageio.ImageIO;
  */
 class ImageFileWriter {
 
+  static ImageFileWriter instance() {
+    return LazyLoader.INSTANCE;
+  }
+  
   /**
    * Saves an image as a PNG file to the file system. If there is already a <code>File</code> present, its contents are
    * discarded.
@@ -39,5 +43,11 @@ class ImageFileWriter {
    */
   boolean writeAsPng(BufferedImage image, String filePath) throws IOException {
     return ImageIO.write(image, PNG, newFile(filePath));
+  }
+
+  private ImageFileWriter() {}
+  
+  private static class LazyLoader {
+    private static ImageFileWriter INSTANCE = new ImageFileWriter();
   }
 }

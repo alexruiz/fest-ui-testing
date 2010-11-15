@@ -23,10 +23,8 @@ import java.awt.*;
  */
 class RobotFactory {
 
-  private static final RobotFactory INSTANCE = new RobotFactory();
-  
   static RobotFactory instance() {
-    return INSTANCE;
+    return LazyLoader.INSTANCE;
   }
   
   Robot createRobot(GraphicsDevice screen) throws AWTException {
@@ -34,5 +32,8 @@ class RobotFactory {
   }
   
   private RobotFactory() {}
-
+  
+  private static class LazyLoader {
+    private static final RobotFactory INSTANCE = new RobotFactory();
+  }
 }

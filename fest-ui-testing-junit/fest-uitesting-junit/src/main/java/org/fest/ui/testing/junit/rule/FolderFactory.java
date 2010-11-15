@@ -28,10 +28,8 @@ import org.fest.util.VisibleForTesting;
  */
 class FolderFactory {
 
-  private static final FolderFactory INSTANCE = new FolderFactory();
-
   static FolderFactory instance() {
-    return INSTANCE;
+    return LazyLoader.INSTANCE;
   }
   
   @VisibleForTesting final SystemProperties system;
@@ -60,5 +58,9 @@ class FolderFactory {
     if (folder.exists()) delete(folder);
     folder.mkdir();
     return folder;
+  }
+
+  private static class LazyLoader {
+    static final FolderFactory INSTANCE = new FolderFactory();
   }
 }

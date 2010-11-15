@@ -25,12 +25,10 @@ import org.fest.util.VisibleForTesting;
  */
 class SystemProperties {
 
-  private static final SystemProperties INSTANCE = new SystemProperties();
-
   private String fileSeparator = separator;
 
   static SystemProperties instance() {
-    return INSTANCE;
+    return LazyLoader.INSTANCE;
   }
 
   @VisibleForTesting static SystemProperties fileSeparator(String fileSeparator) {
@@ -44,4 +42,8 @@ class SystemProperties {
   }
 
   private SystemProperties() {}
+  
+  private static class LazyLoader {
+    static final SystemProperties INSTANCE = new SystemProperties();
+  }
 }

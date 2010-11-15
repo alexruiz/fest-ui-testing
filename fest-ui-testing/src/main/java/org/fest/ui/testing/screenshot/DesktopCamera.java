@@ -14,12 +14,13 @@
  */
 package org.fest.ui.testing.screenshot;
 
+import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
 import static java.util.logging.Level.WARNING;
+import static org.fest.ui.testing.screenshot.ImageFormats.PNG;
+import static org.fest.util.Strings.*;
 
-import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.image.BufferedImage;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 import org.fest.util.VisibleForTesting;
 
@@ -30,63 +31,71 @@ import org.fest.util.VisibleForTesting;
  */
 public class DesktopCamera {
 
-  private static final DesktopCamera INSTANCE = new DesktopCamera();
-
   /**
    * Returns the singleton instance of this class.
    * @return the singleton instance of this class.
    */
   public static DesktopCamera instance() {
-    return INSTANCE;
+    return LazyLoader.INSTANCE;
   }
 
+  private static class LazyLoader {
+    private static final DesktopCamera INSTANCE = newDesktopCamera();
+  }
+
+  private static DesktopCamera newDesktopCamera() {
+    DesktopCamera camera = null;
+    try {
+      Displays displays = new Displays(RobotFactory.instance(), getLocalGraphicsEnvironment());
+      camera = new DesktopCamera(ImageFileWriter.instance(), displays);
+    } catch (Throwable t) {
+      logger.log(Level.WARNING, "Unable to create a DesktopCamera", t);
+    }
+    return camera;
+  }
+  
   private static Logger logger = Logger.getAnonymousLogger();
 
   private final ImageFileWriter writer;
-  private final ImageFilePathValidator pathValidator;
-  private final DisplayOld display;
-  private final Robot robot;
+  private final Displays displays;
 
-  private DesktopCamera() {
-    this(new ImageFileWriter(), ImageFilePathValidator.instance(), DisplayOld.instance());
-  }
-
-  @VisibleForTesting
-  DesktopCamera(ImageFileWriter writer, ImageFilePathValidator pathValidator, DisplayOld display) {
+  @VisibleForTesting DesktopCamera(ImageFileWriter writer, Displays displays) {
     this.writer = writer;
-    this.pathValidator = pathValidator;
-    this.display = display;
-    this.robot = robot(display);
-  }
-
-  private static Robot robot(DisplayOld display) {
-    Robot robot = null;
-    try {
-      robot = display.newRobotInPrimary();
-    } catch (Throwable t) {
-      logger.log(WARNING, "Unable to create an AWT Robot", t);
-    }
-    return robot;
+    this.displays = displays;
   }
 
   /**
    * Takes a screenshot of the desktop and saves it as a PNG file.
-   * @param path the path of the file to save the screenshot to.
+   * <p>
+   * In the case of multiple displays, this method will take a screenshot per display, and it will save them as one
+   * image file per screenshot. Each image will have the same name (specified by {@code path}) with a different index.
+   * For example, let's assume we have 2 displays and we pass the path "/tmp/myImage." This method will store the 
+   * screenshots of both displays as "/tmp/myImage0.png" and "/tmp/myImage1.png," for the first and second display 
+   * respectively.
+   * </p>
+   * @param path the path of the file to save the screenshot to. It must not include the extension ".png" since this
+   * method may add an index to {@code path} if the system has multiple displays.
    * @throws NullPointerException if the given file path is {@code null}.
-   * @throws IllegalArgumentException if the given file path does not end with ".png".
+   * @throws IllegalArgumentException if the given file path is empty.
    */
   public void saveDesktopAsPng(String path) {
-    pathValidator.validate(path);
-    if (robot == null) return;
+    validate(path);
     try {
-      writer.writeAsPng(screenshotOfDesktop(), path);
+      BufferedImage[] screenshots = displays.desktopScreenshots();
+      int screenshotCount = screenshots.length;
+      if (screenshotCount == 1) {
+        writer.writeAsPng(screenshots[0], join(path, PNG).with("."));
+        return;
+      }
+      for (int i = 0; i < screenshotCount; i++)
+        writer.writeAsPng(screenshots[i], concat(path, Integer.toString(i), PNG));
     } catch (Throwable t) {
-      logger.log(WARNING, "Unable to take the screenshot and save it as a file", t);
+      logger.log(WARNING, "Unable to take screenshot(s) of the desktop", t);
     }
   }
-
-  private BufferedImage screenshotOfDesktop() {
-    Rectangle r = new Rectangle(display.sizeOfPrimary());
-    return robot.createScreenCapture(r);
+  
+  private void validate(String path) {
+    if (path == null) throw new NullPointerException("The path of the image(s) to save should not be null");
+    if (path.length() == 0) throw new IllegalArgumentException("The path of the image(s) to save should not be empty");
   }
 }

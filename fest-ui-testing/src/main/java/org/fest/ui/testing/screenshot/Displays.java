@@ -14,6 +14,8 @@
  */
 package org.fest.ui.testing.screenshot;
 
+import static java.util.Collections.unmodifiableList;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -28,16 +30,15 @@ import org.fest.util.VisibleForTesting;
  */
 public class Displays {
 
-  @VisibleForTesting final List<Display> displays;
+  private final List<Display> displays = new ArrayList<Display>();
 
-  public Displays(RobotFactory robotFactory, GraphicsEnvironment environment) throws AWTException {
-    GraphicsDevice[] screens = environment.getScreenDevices();
-    displays = new ArrayList<Display>(screens.length);
-    for (GraphicsDevice screen : screens) displays.add(new Display(robotFactory, screen));
+  @VisibleForTesting Displays(RobotFactory robotFactory, GraphicsEnvironment environment) throws AWTException {
+    for (GraphicsDevice screen : environment.getScreenDevices()) 
+      displays.add(new Display(robotFactory, screen));
   }
   
   @VisibleForTesting Displays(List<Display> displays) {
-    this.displays = new ArrayList<Display>(displays);
+    this.displays.addAll(displays);
   }
   
   public BufferedImage[] desktopScreenshots() {
@@ -46,5 +47,9 @@ public class Displays {
     for (int i = 0; i < displayCount; i++)
       images[i] = displays.get(i).desktopScreenshot();
     return images;
+  }
+  
+  @VisibleForTesting List<Display> displays() {
+    return unmodifiableList(displays);
   }
 }
