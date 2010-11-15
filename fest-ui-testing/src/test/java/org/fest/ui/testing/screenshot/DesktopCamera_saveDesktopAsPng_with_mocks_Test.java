@@ -29,7 +29,7 @@ import org.junit.*;
  *
  * @author Alex Ruiz
  */
-public class DesktopCamera_saveDesktopAsPng_Test {
+public class DesktopCamera_saveDesktopAsPng_with_mocks_Test {
 
   @Rule public ExpectedException thrown = none();
 
