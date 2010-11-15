@@ -46,10 +46,4 @@ public class ScreenshotOnFailure_apply_Test {
     Statement applied = rule.apply(baseStatement, method, new Object());
     assertThat(applied).isInstanceOf(ScreenshotOnFailureStatement.class);
   }
-
-  @Test public void should_return_base_Statement_if_FilePathFactory_is_null() {
-    rule = new ScreenshotOnFailure(null);
-    Statement applied = rule.apply(baseStatement, method, new Object());
-    assertThat(applied).isSameAs(baseStatement);
-  }
 }

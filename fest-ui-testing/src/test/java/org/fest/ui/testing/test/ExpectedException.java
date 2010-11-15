@@ -43,6 +43,10 @@ public class ExpectedException implements MethodRule {
     expect(IllegalArgumentException.class, message);
   }
 
+  public void expectNullPointerException(String message) {
+    expect(NullPointerException.class, message);
+  }
+
   public void expectScreenLockException(String message) {
     expect(ScreenLockException.class, message);
   }

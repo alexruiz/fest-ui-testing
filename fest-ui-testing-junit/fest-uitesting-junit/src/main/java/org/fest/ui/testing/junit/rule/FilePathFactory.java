@@ -14,11 +14,11 @@
  */
 package org.fest.ui.testing.junit.rule;
 
-import static org.fest.ui.testing.screenshot.ImageFormats.PNG;
 import static org.fest.util.Arrays.isEmpty;
 import static org.fest.util.Strings.concat;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.fest.util.VisibleForTesting;
@@ -31,30 +31,30 @@ import org.fest.util.VisibleForTesting;
  */
 class FilePathFactory {
 
-  // TODO make singleton
-  
-  private final File parentFolder;
+  static FilePathFactory instance() {
+    return LazyLoader.INSTANCE;
+  }
+
   @VisibleForTesting final SystemProperties system;
 
-  FilePathFactory(File parentFolder) {
-    this(parentFolder, SystemProperties.instance());
+  private FilePathFactory() {
+    this(SystemProperties.instance());
   }
-  
-  @VisibleForTesting FilePathFactory(File parentFolder, SystemProperties system) {
-    this.parentFolder = parentFolder;
+
+  @VisibleForTesting FilePathFactory(SystemProperties system) {
     this.system = system;
   }
 
-  String deriveFilePathFrom(Class<?> type, Method method) throws IOException {
+  String deriveFilePathFrom(Class<?> type, Method method, File parentFolder) throws IOException {
     String testName = testNameFrom(type, method);
-    return concat(parentFolder.getCanonicalPath(), system.fileSeparator(), testName, ".", PNG);
+    return concat(parentFolder.getCanonicalPath(), system.fileSeparator(), testName);
   }
 
   private static String testNameFrom(Class<?> type, Method method) {
-    return concat(type.getName(), ".", method.getName(), format(method.getParameterTypes()));
+    return concat(type.getName(), ".", method.getName(), asText(method.getParameterTypes()));
   }
 
-  private static String format(Class<?>[] parameterTypes) {
+  private static String asText(Class<?>[] parameterTypes) {
     if (isEmpty(parameterTypes)) return "";
     StringBuilder buffer = new StringBuilder("(");
     for (int i = 0; i < parameterTypes.length; i++) {
@@ -63,5 +63,9 @@ class FilePathFactory {
     }
     buffer.append(")");
     return buffer.toString();
+  }
+
+  private static class LazyLoader {
+    static final FilePathFactory INSTANCE = new FilePathFactory();
   }
 }

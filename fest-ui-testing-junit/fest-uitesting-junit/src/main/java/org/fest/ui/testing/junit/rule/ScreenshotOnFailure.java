@@ -39,21 +39,16 @@ public class ScreenshotOnFailure implements MethodRule {
 
   private static Logger logger = getAnonymousLogger();
 
-  @VisibleForTesting final FilePathFactory pathFactory;
+  @VisibleForTesting final FilePathFactory filePathFactory;
+  private final ScreenshotsFolderFactory folderFactory;
 
   public static ScreenshotOnFailure newRule() {
-    FilePathFactory pathFactory = null;
-    try {
-      File parentFolder = ScreenshotsFolderFactory.instance().createFolderForScreenshots();
-      pathFactory = new FilePathFactory(parentFolder);
-    } catch (Throwable t) {
-      logger.log(WARNING, "Unable to create the folder where to store screenshots", t);
-    }
-    return new ScreenshotOnFailure(pathFactory);
+    return new ScreenshotOnFailure(ScreenshotsFolderFactory.instance(), FilePathFactory.instance());
   }
 
-  @VisibleForTesting ScreenshotOnFailure(FilePathFactory pathFactory) {
-    this.pathFactory = pathFactory;
+  @VisibleForTesting ScreenshotOnFailure(ScreenshotsFolderFactory folderFactory, FilePathFactory filePathFactory) {
+    this.folderFactory = folderFactory;
+    this.filePathFactory = filePathFactory;
   }
 
   /**
@@ -67,7 +62,6 @@ public class ScreenshotOnFailure implements MethodRule {
    * execution of the test method fails.
    */
   public Statement apply(Statement baseStatement, FrameworkMethod method, Object target) {
-    if (pathFactory == null) return baseStatement;
     return new ScreenshotOnFailureStatement(baseStatement, method);
   }
 
@@ -96,7 +90,8 @@ public class ScreenshotOnFailure implements MethodRule {
       try {
         if (!guiTestFilter.isGuiTest(method)) return;
         Method realMethod = method.getMethod();
-        String path = pathFactory.deriveFilePathFrom(realMethod.getDeclaringClass(), realMethod);
+        File parentFolder = folderFactory.createFolderForScreenshots();
+        String path = filePathFactory.deriveFilePathFrom(realMethod.getDeclaringClass(), realMethod, parentFolder);
         desktopCamera.saveDesktopAsPng(path);
       } catch (Throwable t) {
         logger.log(WARNING, "Unable to take screenshot of the desktop", t);

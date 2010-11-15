@@ -28,7 +28,7 @@ import org.fest.util.VisibleForTesting;
  *
  * @author Alex Ruiz
  */
-final class ScreenshotsFolderFactory {
+class ScreenshotsFolderFactory {
 
   private static final ScreenshotsFolderFactory INSTANCE = new ScreenshotsFolderFactory();
 

@@ -18,6 +18,7 @@ import static org.fest.reflect.core.Reflection.method;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.Mockito.*;
 
+import java.io.File;
 import java.lang.reflect.Method;
 
 import org.fest.ui.testing.junit.category.GuiTestFilter;
@@ -42,6 +43,7 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
 
   private Statement baseStatement;
   private FrameworkMethod method;
+  private ScreenshotsFolderFactory folderFactory;
   private FilePathFactory pathFactory;
 
   private ScreenshotOnFailureStatement statement;
@@ -54,8 +56,9 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
   @Before public void setUp() {
     baseStatement = mock(Statement.class);
     method = mock(FrameworkMethod.class);
+    folderFactory = mock(ScreenshotsFolderFactory.class);
     pathFactory = mock(FilePathFactory.class);
-    ScreenshotOnFailure rule = new ScreenshotOnFailure(pathFactory);
+    ScreenshotOnFailure rule = new ScreenshotOnFailure(folderFactory, pathFactory);
     statement = (ScreenshotOnFailureStatement) rule.apply(baseStatement, method, new Object());
     statement.guiTestFilter = mock(GuiTestFilter.class);
     statement.desktopCamera = mock(DesktopCamera.class);
@@ -68,11 +71,13 @@ public class ScreenshotOnFailureStatement_evaluate_Test {
   }
 
   @Test public void should_take_screenshot_if_failing_test_is_GuiTest() throws Throwable {
+    File parentFolder = mock(File.class);
     doThrow(toBeThrown).when(baseStatement).evaluate();
     when(statement.guiTestFilter.isGuiTest(method)).thenReturn(true);
     when(method.getMethod()).thenReturn(realMethod);
     String path = "/tmp/blue.png";
-    when(pathFactory.deriveFilePathFrom(realMethod.getDeclaringClass(), realMethod)).thenReturn(path);
+    when(folderFactory.createFolderForScreenshots()).thenReturn(parentFolder);
+    when(pathFactory.deriveFilePathFrom(realMethod.getDeclaringClass(), realMethod, parentFolder)).thenReturn(path);
     expectStatementFailure();
     statement.evaluate();
     verify(statement.desktopCamera).saveDesktopAsPng(path);

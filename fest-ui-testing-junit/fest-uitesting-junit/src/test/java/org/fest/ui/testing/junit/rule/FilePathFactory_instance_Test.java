@@ -15,21 +15,18 @@
 package org.fest.ui.testing.junit.rule;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-
-import java.io.File;
 
 import org.junit.Test;
 
 /**
- * Tests for <code>{@link FilePathFactory#ScreenshotFilePathCreator(File)}</code>.
+ * Tests for <code>{@link FilePathFactory#instance()}</code>.
  *
  * @author Alex Ruiz
  */
-public class FilePathFactory_constructor_with_File_Test {
+public class FilePathFactory_instance_Test {
 
   @Test public void should_create_FilePathFactory_with_singleton_SystemProperties() {
-    FilePathFactory pathFactory = new FilePathFactory(mock(File.class));
+    FilePathFactory pathFactory = FilePathFactory.instance();
     assertThat(pathFactory.system).isSameAs(SystemProperties.instance());
   }
 }
