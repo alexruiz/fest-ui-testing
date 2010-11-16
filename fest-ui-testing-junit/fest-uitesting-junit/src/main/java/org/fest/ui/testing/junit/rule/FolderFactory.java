@@ -14,8 +14,7 @@
  */
 package org.fest.ui.testing.junit.rule;
 
-import static org.fest.util.Files.delete;
-import static org.fest.util.Strings.concat;
+import static org.fest.util.Strings.*;
 
 import java.io.*;
 
@@ -49,15 +48,22 @@ class FolderFactory {
    * @param parent the parent of the folder to create.
    * @param name the name of the folder to create.
    * @return the created folder.
-   * @throws IOException if any I/O error occurs while creating the folder.
+   * @throws IOException if any I/O error occurs while creating (or recreating) the folder.
    */
   File createFolder(File parent, String name) throws IOException {
     String canonicalPath = parent.getCanonicalPath();
-    File folder = new File(concat(canonicalPath, system.fileSeparator(), name));
+    String fullPath = concat(canonicalPath, system.fileSeparator(), name);
+    // TODO find a way to pass this new File as a mock, to test failure to create a folder.
+    File folder = new File(fullPath);
     if (folder.isDirectory()) return folder;
-    if (folder.exists()) delete(folder);
-    folder.mkdir();
+    deleteIfNotFolder(folder, fullPath);
+    if (!folder.mkdir()) throw new IOException(String.format("Unable to create folder %s", quote(fullPath)));
     return folder;
+  }
+
+  private void deleteIfNotFolder(File folder, String fullPath) throws IOException {
+    if (!folder.exists()) return;
+    if (!folder.delete()) throw new IOException(String.format("Unable to delete %s", quote(fullPath)));
   }
 
   private static class LazyLoader {

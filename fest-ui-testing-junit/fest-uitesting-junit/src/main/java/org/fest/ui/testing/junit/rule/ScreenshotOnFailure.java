@@ -39,7 +39,7 @@ public class ScreenshotOnFailure implements MethodRule {
 
   private static Logger logger = getAnonymousLogger();
 
-  @VisibleForTesting final FilePathFactory filePathFactory;
+  private final FilePathFactory filePathFactory;
   private final ScreenshotsFolderFactory folderFactory;
 
   public static ScreenshotOnFailure newRule() {
