@@ -17,17 +17,18 @@ package org.fest.ui.testing.junit.rule;
 import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
 import static javax.imageio.ImageIO.read;
 import static org.fest.assertions.Assertions.assertThat;
-import static org.fest.ui.testing.junit.rule.ScreenshotOnFailure.newRule;
 import static org.fest.util.Files.delete;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GraphicsDevice;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
-import org.fest.ui.testing.junit.category.GuiTest;
+import org.fest.ui.testing.junit.test.FailingGuiTest;
 import org.junit.*;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.*;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 /**
  * Tests <code>{@link ScreenshotOnFailure}</code> using a real test class.
@@ -38,7 +39,7 @@ public class ScreenShotOnFailure_with_real_tests_Test {
 
   private JUnitCore junit;
   private ScreenshotsFolderFactory folderFactory;
-  
+
   @Before public void setUp() throws IOException {
     folderFactory = ScreenshotsFolderFactory.instance();
     delete(folderFactory.createFolderForScreenshots());
@@ -46,7 +47,7 @@ public class ScreenShotOnFailure_with_real_tests_Test {
   }
 
   @Test public void should_take_screenshot_when_test_fails() throws IOException {
-    Result result = junit.run(MyTest.class);
+    Result result = junit.run(FailingGuiTest.class);
     assertThat(result.wasSuccessful()).isFalse();
     File folder = folderFactory.createFolderForScreenshots();
     File[] screenshotFiles = folder.listFiles();
@@ -65,15 +66,5 @@ public class ScreenShotOnFailure_with_real_tests_Test {
 
   private static Dimension sizeOf(GraphicsDevice screen) {
     return screen.getDefaultConfiguration().getBounds().getSize();
-  }
-  
-  @Category(GuiTest.class)
-  public static class MyTest {
-    
-    @Rule public ScreenshotOnFailure screenshotOnFailure = newRule();
-    
-    @Test public void shouldFailOnPurpose() {
-      throw new RuntimeException("Thrown on purpose");
-    }
   }
 }
