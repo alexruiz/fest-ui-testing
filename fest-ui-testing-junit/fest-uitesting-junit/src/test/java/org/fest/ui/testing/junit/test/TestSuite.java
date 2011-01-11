@@ -25,7 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Categories.class)
 @IncludeCategory(GuiTest.class)
-@SuiteClasses( { A.class, B.class, C.class, D.class, E.class })
+@SuiteClasses( { E.class })
 public class TestSuite {
 
 }
